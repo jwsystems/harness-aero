@@ -598,7 +598,7 @@
   <div class="slide" data-title="Bounded autonomy, in detail">
 
   <figure class="wide zoomable">
-    <h3 class="figtitle">The fan disk through the harness, in detail</h3>
+    <h3 class="figtitle">Aero Parts Harness: Fan Disk Example, in Detail</h3>
     <div class="diagram">
 <svg viewBox="0 0 1420 910" role="img" aria-label="The fan disk through the harness. Events and a schedule put jobs on a queue: a part received, a finding opened, a person's note, or a scheduled sweep. One kind of worker claims a job and runs Claude, an agent whose goal comes from the job, with subagents for context offloading and read-only tools. When Claude finishes, its claims go to deterministic gates: source checks, verifiers and ledger rules, a logic check, and policy.decide(), which decides what happens next. Every check passes except the NDT sign-off, so the disk goes to HITL review. A Slack card reaches the aerospace engineer. Approve or Reject resumes the policy, which re-runs every check. Need more info becomes a new investigation job on the queue.">
 <defs>
@@ -836,7 +836,7 @@
 
   <div class="slide" data-title="The Hill-Climbing Loop">
   <figure class="loop">
-    <h3 class="figtitle">The Hill-Climbing Loop</h3>
+    <h3 class="figtitle">Recursive Improvement: The Hill-Climbing Loop</h3>
     <div class="diagram">
 <svg viewBox="0 0 1020 545" role="img" aria-label="The hill-climbing loop. Production records every part, check and human decision. Each decision becomes a labeled historical case, curated into a golden set of edge cases. A candidate change B, such as a prompt, a verifier or a threshold, is simulated against the current system A on the same history, in scripted runs that test the harness and live multi-trial runs that test Claude. The scores go to the gates, which must stay at zero, and the objectives, which should climb. B ships only if every gate stays at zero and an objective improves, and then becomes A in production; otherwise it is revised.">
 <defs><marker id="f2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
