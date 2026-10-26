@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fan Disk Harness</title>
+<meta name="description" content="How a Claude harness clears jet engine parts: Claude reads the paperwork, code decides, a person signs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=B612:wght@400;700&family=B612+Mono&display=swap">
+<style>
+  /* Base (was the artifact wrapper's): no default margin, honor [hidden], images fit. */
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden]:not([hidden=until-found i]) { display: none !important; }
+  /* Layout: one reading column; the two diagrams break out wide and scroll sideways on phones. Sibling of the Aero Harness Architecture page. */
+  :root {
+    --bg: #f3f6f7; --panel: #ffffff; --ink: #13232b; --muted: #5a6b73; --line: #d3dde1;
+    --accent: #0b6a85; --accent-soft: #e2f0f4;
+    --ok: #1d7a4c; --warn: #a3620a; --warn-soft: #fbf0dc;
+    --display: "B612", "Segoe UI", system-ui, sans-serif;
+    --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+    --mono: "B612 Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c1317; --panel: #131e24; --ink: #e2ebee; --muted: #8fa2ab; --line: #26363e;
+      --accent: #5cc9e0; --accent-soft: #15303a; --ok: #5fd39a; --warn: #f0b45a; --warn-soft: #3a2a12;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1317; --panel: #131e24; --ink: #e2ebee; --muted: #8fa2ab; --line: #26363e;
+    --accent: #5cc9e0; --accent-soft: #15303a; --ok: #5fd39a; --warn: #f0b45a; --warn-soft: #3a2a12;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 40px 64px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 64px; }
+  .slide > .inner { max-width: 1180px; margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+
+  /* Presenting: one slide at a time, fitted to the screen, with a slide bar along the bottom. */
+  :root { --barh: 64px; }
+  body.deck { padding-block: 24px calc(var(--barh) + 24px); }
+  body.deck .wrap { max-width: none; display: block; }
+  body.deck .slide { min-height: calc(100dvh - var(--barh) - 48px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; justify-content: center; }
+  body.deck .slide > .inner { width: 100%; animation: slidein .22s ease-out; }
+  .slide[hidden] { display: none !important; }
+  /* Scrolling: a light rule between slides. */
+  body:not(.deck) .wrap { gap: 48px; }
+  body:not(.deck) .slide + .slide { border-top: 1px solid var(--line); padding-top: 48px; }
+  @keyframes slidein { from { opacity: .35; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { body.deck .slide > .inner { animation: none; } }
+
+  .deckbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 10px;
+    background: var(--panel); border-top: 1px solid var(--line);
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+  .deckbar button { font: 700 14px/1 var(--display); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; cursor: pointer; }
+  .deckbar button:hover { border-color: var(--accent); }
+  .deckbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .deckbar .dots { display: flex; flex-wrap: wrap; gap: 6px; }
+  .deckbar .dots button { min-width: 34px; padding: 8px 0; font-variant-numeric: tabular-nums; }
+  .deckbar .dots button[aria-current="step"] { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+  .deckbar .slidename { flex: 1; min-width: 0; font: 700 15px/1.2 var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .deckbar .count { color: var(--muted); font: 13px var(--mono); margin-right: 8px; }
+  body:not(.deck) .deckbar { left: auto; border: 1px solid var(--line); border-radius: 10px 0 0 0; }
+  body:not(.deck) .deckbar > :not(#mode) { display: none; }
+  /* Phones: previous / next and the slide's name, no numbered buttons. */
+  @media (max-width: 720px) { .deckbar .dots { display: none; } .deckbar .slidename { order: 1; } .deckbar #next { order: 2; } .deckbar #mode { order: 3; } }
+  .col { max-width: 70ch; }
+  .eyebrow { font: 700 12px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font: 700 clamp(26px, 4vw, 38px)/1.2 var(--display); margin: 0 0 14px; text-wrap: balance; letter-spacing: -.01em; }
+  h2 { font: 700 19px/1.3 var(--display); margin: 0 0 12px; text-wrap: balance; }
+  h3 { font: 700 15px/1.3 var(--display); margin: 0 0 6px; }
+  p { margin: 0 0 12px; }
+  .slidetitle { font-size: clamp(22px, 3vw, 30px); margin: 0; }
+  .lede { color: var(--muted); font-size: 17px; margin: 0; }
+  .muted { color: var(--muted); }
+
+  .props { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 20px 28px; }
+  .prop { border-top: 2px solid var(--accent); padding-top: 12px; min-width: 0; }
+  .prop h3 { color: var(--accent); letter-spacing: .02em; }
+  .prop p { margin: 0; font-size: 15px; }
+
+  figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px; min-width: 0; }
+  .diagram { overflow-x: auto; }
+  .diagram svg { display: block; width: 100%; min-width: 1060px; height: auto; color: var(--ink); font-family: var(--display); font-size: 12px; }
+  .figtitle { font: 700 17px/1.3 var(--display); margin: 0 0 14px; color: var(--ink); letter-spacing: .01em; }
+  figure.wide { margin-inline: calc(-1 * max(0px, (min(1460px, 100vw - 48px) - 1180px) / 2)); }
+  figcaption { color: var(--muted); font-size: 14.5px; margin-top: 14px; max-width: 95ch; }
+  .box { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
+  .model { stroke-dasharray: 6 4; }
+  .gate { stroke: var(--accent); stroke-width: 2.6; fill: var(--accent-soft); }
+  .group { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; }
+  .planned { stroke: var(--muted); stroke-dasharray: 2 3; stroke-width: 1.5; }
+  .hitl { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1.6; }
+  .btn { fill: var(--bg); stroke: var(--muted); stroke-width: 1; }
+  .edge { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+  .wake { fill: none; stroke: var(--warn); stroke-width: 1.8; stroke-dasharray: 5 4; }
+  .head { fill: var(--ink); }
+  .head-w { fill: var(--warn); }
+  svg text { fill: var(--ink); }
+  svg .b { font-weight: 700; }
+  svg .m { fill: var(--muted); font-size: 11px; }
+  svg .mo { font-family: var(--mono); font-size: 10.5px; }
+  svg .tag { fill: var(--muted); font-size: 10px; letter-spacing: .08em; }
+  svg .sev { fill: var(--muted); font-size: 10px; letter-spacing: .04em; }
+  svg .ok { fill: var(--ok); font-weight: 700; }
+  svg .warn { fill: var(--warn); font-weight: 700; }
+  svg .wtext { fill: var(--warn); font-size: 11px; }
+  svg .colhead { font: 700 14px var(--display); letter-spacing: .1em; fill: var(--accent); }
+  svg .h { font-size: 15px; }
+  .harness { fill: none; stroke: var(--accent); stroke-width: 2; }
+  svg .vn { font-size: 12px; }
+  figure.zoomable { position: relative; }
+  .zoombar { position: absolute; top: 14px; right: 20px; display: flex; align-items: center; gap: 6px; }
+  .zoombar button { font: 700 13px/1 var(--display); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; cursor: pointer; }
+  .zoombar button:hover { border-color: var(--accent); }
+  .zoombar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .zoomhint { color: var(--muted); font-size: 13px; margin-right: 6px; }
+  @media (max-width: 720px) { .zoombar { position: static; margin: -4px 0 10px; flex-wrap: wrap; } }
+  .zoomable .diagram { cursor: zoom-in; touch-action: pan-x pan-y; }
+  .zoomable .diagram.zoomed { overflow: auto; cursor: grab; user-select: none; }
+  .zoomable .diagram.dragging { cursor: grabbing; }
+  .lab { font: 700 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .lab.acc { color: var(--accent); }
+  .savings { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 20px 32px; margin-top: 24px; }
+  .saving { border-top: 2px solid var(--accent); padding-top: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .saving h3 { margin: 0; font-size: 18px; }
+  .compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .compare > div { display: grid; gap: 6px; align-content: start; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+  .compare > .win { border-color: var(--accent); background: var(--accent-soft); }
+  .compare b { font: 700 clamp(19px, 2vw, 24px)/1.2 var(--display); }
+  .compare b .est { font-weight: 400; }
+  .compare > div > span:last-child { font-size: 14.5px; }
+  @media (max-width: 480px) { .compare { grid-template-columns: 1fr; } }
+  .also { margin-top: 26px; }
+  .closing { margin-top: 18px; }
+  table.reuse td { padding-right: 24px; }
+  table.reuse td:nth-child(2) { min-width: 180px; }
+  table.reuse ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+  table.reuse li b { font-family: var(--display); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-right: 6px; }
+  .also h3 { font: 700 12px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .also ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; color: var(--muted); font-size: 14.5px; }
+  .missing { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1.4; stroke-dasharray: 4 3; }
+
+  .flow svg { font-family: var(--body); }
+  .flow .t { font: 700 20px var(--display); }
+  .flow .t2 { font: 700 17px var(--display); }
+  .flow .l { font-size: 15px; }
+  .flow .s { font-size: 13px; fill: var(--muted); }
+  .flow .ws { font-size: 13px; fill: var(--warn); }
+  .flow .hd { font: 700 14px var(--display); letter-spacing: .1em; fill: var(--accent); }
+  .flow .pol { font: 700 16px var(--body); }
+  svg .chip { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+  svg .code { font: 11px var(--mono); }
+  .flow .code { font: 13px var(--mono); }
+  .flow .tl { font-size: 13.5px; font-weight: 700; }
+  .flow .tl .s { font-weight: 400; }
+
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 20px 32px; margin-top: 18px; }
+  .kindcol { border-top: 2px solid var(--accent); padding-top: 14px; min-width: 0; display: grid; gap: 10px; align-content: start; }
+  .kindcol.reader { border-top-color: var(--warn); }
+  .kindcol .kind { font: 700 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .kindcol.reader .kind { color: var(--warn); }
+  .kindcol h3 { margin: 6px 0 0; }
+  .checks { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15px; }
+  .checks code, .checks .nm { font: 13px var(--mono); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; margin-right: 6px; }
+  .simple { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 17px; }
+  .simple b { font-family: var(--display); }
+  .relax { margin: 0; font-size: 17px; max-width: 60ch; }
+  .monolist { margin: 0; font: 13px/1.9 var(--mono); color: var(--muted); }
+  .note { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .swap { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px 32px; margin-top: 22px; }
+  .swap > div { min-width: 0; }
+  .swap ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px 24px; margin: 22px 0 0; }
+  .stat { border-top: 2px solid var(--line); padding-top: 10px; min-width: 0; }
+  .stat b { display: block; font: 700 clamp(24px, 3vw, 30px)/1.1 var(--display); font-variant-numeric: tabular-nums; color: var(--ink); }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .question { font: 700 clamp(19px, 2.4vw, 23px)/1.35 var(--display); margin: 26px 0 0; max-width: 46ch; text-wrap: balance; }
+  .stat sup, .cite sup { font-size: .7em; line-height: 0; color: var(--accent); }
+  .cite { margin: 12px 0 0; color: var(--muted); font-size: 12.5px; }
+  .cite a { color: var(--muted); text-underline-offset: 2px; }
+  .cite.sources-note { margin-top: 40px; font-size: 11px; }
+  .cite a:hover { color: var(--accent); }
+  .qa { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 20px 28px; margin-top: 26px; }
+  .qa .question { margin: 0; max-width: none; }
+  .question.answer { color: var(--accent); }
+  .qarrow { width: 72px; height: 24px; fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 720px) { .qa { grid-template-columns: 1fr; } .qarrow { transform: rotate(90deg); justify-self: start; } }
+  .why { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px 28px; margin-top: 18px; }
+  .why p { margin: 0; font-size: 15px; min-width: 0; }
+  .whylist { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 18px; max-width: 80ch; }
+  .whylist b { font-family: var(--display); }
+  .why b { font-family: var(--display); font-size: 14px; }
+
+  .sources { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+  @media (max-width: 960px) { .sources { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .sources { grid-template-columns: 1fr; } }
+  .src { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; min-width: 0; display: grid; gap: 6px; align-content: start; }
+  .src h3 { margin: 0; }
+  .src .kind { font: 700 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .src p { margin: 0; font-size: 14.5px; }
+  .src.docs { grid-column: span 2; border-color: var(--accent); background: var(--accent-soft); }
+  @media (max-width: 560px) { .src.docs { grid-column: auto; } }
+  .facts { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px 32px; align-items: stretch; }
+  @media (min-width: 1100px) { .facts { grid-template-columns: max-content minmax(0, 1fr); } .factlist li { white-space: nowrap; } }
+  @media (max-width: 860px) { .facts { grid-template-columns: 1fr; } }
+  .facts .factcol { gap: 12px; padding: 16px 22px 20px; }
+  .factcol h2, .facts .docs h2 { margin: 0; }
+  .factlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; font-size: 16px; }
+  .factlist li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .factlist b { font: 14.5px var(--body); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+  .facts .src.docs { grid-column: auto; gap: 12px; padding: 16px 22px 20px; }
+  .facts .src.docs p { font-size: 16px; }
+  .facts .src.docs li { font-size: 14.5px; }
+  .src.docs ul { margin: 2px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+  .src.docs li { font-size: 13.5px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+
+  .approach svg { min-width: 760px; }
+  .asks { display: grid; gap: 10px; }
+  .asks .question { margin: 0; }
+  .approach + .props .prop sup { font-size: .7em; line-height: 0; color: var(--accent); }
+  .loop svg { min-width: 820px; }
+  .engine svg { min-width: 860px; }
+  .eng-metal { fill: var(--line); stroke: var(--ink); stroke-width: 1; }
+  .eng-shell { fill: var(--panel); stroke: var(--ink); stroke-width: 1.3; }
+  .eng-blade { fill: var(--muted); stroke: var(--ink); stroke-width: .8; }
+  .eng-hot { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1; }
+  .eng-disk { fill: var(--accent); stroke: var(--accent); stroke-width: 1.5; }
+  .eng-ring { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 3 3; }
+  .eng-shaft { stroke: var(--ink); stroke-width: 2.4; }
+  .eng-flow { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 6 5; }
+  .eng-lead { fill: none; stroke: var(--muted); stroke-width: 1; }
+  .eng-call { fill: none; stroke: var(--accent); stroke-width: 1.8; }
+  svg .acc { fill: var(--accent); font-weight: 700; }
+
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 14px 10px 0; border-bottom: 1px solid var(--line); }
+  th { font: 700 12px/1.3 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  td:first-child { font-weight: 700; }
+  td.basis { color: var(--muted); font-size: 13.5px; }
+  .est { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .bottomline { border-left: 2px solid var(--accent); padding: 4px 0 4px 16px; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="deck">
+  <div class="slide" data-title="The problem">
+  <header>
+    <div class="col">
+      <p class="eyebrow">Aero parts supply chain harness</p>
+      <h1>Replacing jet engine parts is a multibillion-dollar bottleneck. Claude can help.</h1>
+      <p class="lede">Every replacement part must be proven before the plane can fly again. Today a licensed inspector reviews by hand, one packet at a time.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>45,000+</b><span>commercial engines in GE Aerospace's fleet, CFM56 included<sup>1</sup></span></div>
+      <div class="stat"><b>1,000s</b><span>of tracked parts per engine; a GEnx has 1.1 million parts in all<sup>2</sup></span></div>
+      <div class="stat"><b>5–10</b><span>pieces of paperwork per tracked part <span class="est">est.</span></span></div>
+      <div class="stat"><b>~$150K</b><span>in lost revenue for every day a 737 sits on the ground <span class="est">est.</span></span></div>
+      <div class="stat"><b>Labor gap</b><span>too few licensed inspectors and technicians for the work</span></div>
+    </div>
+    <div class="qa">
+      <p class="question">How do you clear more engine parts, faster, without a single false positive?</p>
+      <svg class="qarrow" viewBox="0 0 72 24" aria-hidden="true"><line x1="2" y1="12" x2="62" y2="12"/><path d="M58,4 L70,12 L58,20"/></svg>
+      <p class="question answer">Bounded autonomy, deterministic verifiers, evals, and hill-climbing.</p>
+    </div>
+    <p class="cite sources-note"><sup>1</sup> GE Aerospace, <a href="https://www.sec.gov/Archives/edgar/data/40545/000130817925000116/ge013272-ars.pdf">2024 annual report</a> · <sup>2</sup> GE Aerospace, <a href="https://www.geaerospace.com/news/articles/manufacturing/magnitude-manufacturing-genx">“The magnitude of manufacturing in the GEnx”</a> · est.: industry estimates, not from GE</p>
+  </header>
+
+  </div>
+
+  <div class="slide" data-title="Reference architecture">
+  <section>
+    <h2 class="slidetitle">Reference Architecture: Bounded Autonomy and Deterministic Verifiers</h2>
+  </section>
+
+  <figure class="flow approach">
+    <div class="diagram">
+<svg viewBox="0 0 1180 280" role="img" aria-label="Bounded autonomy in three steps. Claude reads: any document in any format, quoting every value it reports, through read-only tools. It passes its claims, each quoted, to code. Code decides: deterministic verifiers clear a part only if every check passes, block it if a hard rule fails, and ask a person about anything unproven. A person signs off on one prepared question and a brief, and can approve, reject or ask for more. Asking for more sends the note back to Claude as new context.">
+<defs>
+  <marker id="a2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="a2w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-w" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="box model" x="10" y="20" width="320" height="170" rx="8"/>
+<text class="t" x="30" y="56">Claude reads</text>
+<text class="s" x="30" y="80">the model: flexible, never decides</text>
+<text class="l" x="30" y="116">Any document, any format or era</text>
+<text class="l" x="30" y="142">Quotes every value it reports</text>
+<text class="l" x="30" y="168">Read-only tools, every call logged</text>
+<line class="edge" x1="330" y1="105" x2="428" y2="105" marker-end="url(#a2a)"/>
+<text class="s" x="379" y="95" text-anchor="middle">claims</text>
+<text class="s" x="379" y="125" text-anchor="middle">each quoted</text>
+
+<rect class="box gate" x="430" y="20" width="320" height="170" rx="8"/>
+<text class="t" x="450" y="56">Code decides</text>
+<text class="s" x="450" y="80">deterministic verifiers: no model</text>
+<text class="l" x="450" y="116">Clears only if every check passes</text>
+<text class="l" x="450" y="142">A hard rule fails: blocked</text>
+<text class="l" x="450" y="168">Anything unproven: ask a person</text>
+<line class="edge" x1="750" y1="105" x2="848" y2="105" marker-end="url(#a2a)"/>
+<text class="s" x="799" y="95" text-anchor="middle">one question</text>
+<text class="s" x="799" y="125" text-anchor="middle">and a brief</text>
+
+<rect class="group" x="850" y="20" width="320" height="170" rx="8"/>
+<text class="t" x="870" y="56">A person signs off</text>
+<text class="s" x="870" y="80">the accountable expert</text>
+<text class="l" x="870" y="116">Gets a brief, not a pile of paper</text>
+<text class="l" x="870" y="142">Approves, rejects, or asks for more</text>
+<text class="l" x="870" y="168">A click re-runs every check</text>
+
+<polyline class="wake" points="1010,190 1010,236 170,236 170,192" marker-end="url(#a2w)"/>
+<text class="ws" x="590" y="262" text-anchor="middle">Asks for more: the note is new context, and Claude looks again</text>
+</svg>
+    </div>
+  </figure>
+
+  <div class="props">
+    <div class="prop">
+      <h3>Zero false positives</h3>
+      <p>A part clears only when code proves every check. Anything unproven is blocked or goes to a person.</p>
+    </div>
+    <div class="prop">
+      <h3>Mise en place for the expert</h3>
+      <p>Claude searches, cross-checks and synthesizes, so the expert starts from a prepared brief. Knowledge workers lose about 2 hours a day searching for answers,<sup>3</sup> and spend 57% of their time in meetings, email and chat.<sup>4</sup></p>
+    </div>
+    <div class="prop">
+      <h3>One pattern, many industries</h3>
+      <p>Here, the certification paperwork that proves engine parts are genuine and tested. The same pattern fits any regulated sign-off.</p>
+    </div>
+  </div>
+
+  <div class="asks">
+    <p class="question answer">What verifiers and gates describe the logic of this process?</p>
+    <p class="question answer">What data does a person spend time reviewing?</p>
+  </div>
+  <p class="cite"><sup>3</sup> Atlassian, <a href="https://www.atlassian.com/blog/state-of-teams-2025">State of Teams 2025</a>: 25% of time spent searching for answers (12,000 knowledge workers, 200 executives) · <sup>4</sup> Microsoft, <a href="https://www.microsoft.com/en-us/worklab/work-trend-index/will-ai-fix-work">Work Trend Index 2023</a>: Microsoft 365 activity data</p>
+
+  </div>
+
+  <div class="slide" data-title="What a person reviews today">
+  <section>
+    <p class="eyebrow">The data</p>
+    <h2 class="slidetitle">What a person reviews today, and Claude reads instead</h2>
+  </section>
+
+  <section class="facts">
+    <div class="src factcol">
+      <span class="kind">Deterministic ground truth</span>
+      <h2>Facts and events</h2>
+      <ul class="factlist">
+        <li><b>On-condition parts</b> repaired and resold</li>
+        <li><b>Life-limited parts</b> retired at a cycle limit</li>
+        <li><b>Digital twin</b> cycles from flight data</li>
+        <li><b>Airworthiness directives</b> FAA inspect-or-retire orders</li>
+        <li><b>Systems of record</b> work orders, catalog, stores, SAP</li>
+        <li><b>Receiving inspection</b> the S/N on the part</li>
+      </ul>
+    </div>
+    <div class="src docs">
+      <span class="kind">Extract facts from unstructured data</span>
+      <h2>Documents</h2>
+      <p>Every supplier and era has its own format. Claude reads them all; code checks that every value is quoted from its page.</p>
+      <ul>
+        <li>FAA 8130-3</li><li>EASA Form 1</li><li>OEM certificates</li><li>NDT reports</li>
+        <li>Back-to-birth trace</li><li>Vendor emails</li><li>Handwritten sign-offs</li>
+      </ul>
+    </div>
+  </section>
+
+  </div>
+
+  <div class="slide" data-title="Example: replacing a fan disk">
+  <section>
+    <div class="col">
+      <h2 class="slidetitle">Example: replacing a fan disk</h2>
+    </div>
+  </section>
+
+  <figure class="engine">
+    <div class="diagram">
+<svg viewBox="0 0 940 440" role="img" aria-label="Cross-section of a CFM56 turbofan, front at left. Air enters the fan; most of it bypasses the core. The core holds the booster, high-pressure compressor, combustor, high-pressure turbine and low-pressure turbine, with the exhaust cone at the rear. The fan disk, highlighted, is the hub at the front that the fan blades slot into, driven by the low-pressure shaft.">
+<defs>
+  <marker id="e1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+  <g id="eng-half">
+    <path class="eng-shell" d="M60,68 Q64,40 104,38 L480,44 L568,78 L480,60 L110,56 Q76,58 60,68 Z"/>
+    <polygon class="eng-blade" points="154,152 172,152 170,62 156,64"/>
+    <path class="eng-shell" d="M198,150 Q206,122 236,118 L470,110 L574,134 L574,142 L470,124 L236,132 Q214,134 206,152 Z"/>
+    <rect class="eng-blade" x="214" y="136" width="4" height="22"/>
+    <rect class="eng-blade" x="224" y="136" width="4" height="22"/>
+    <rect class="eng-blade" x="234" y="136" width="4" height="22"/>
+    <rect class="eng-blade" x="256" y="136" width="5" height="26"/>
+    <rect class="eng-blade" x="266" y="137" width="5" height="24"/>
+    <rect class="eng-blade" x="276" y="138" width="5" height="22"/>
+    <rect class="eng-blade" x="286" y="139" width="5" height="20"/>
+    <rect class="eng-blade" x="296" y="140" width="5" height="18"/>
+    <rect class="eng-blade" x="306" y="141" width="5" height="16"/>
+    <rect class="eng-blade" x="316" y="142" width="5" height="15"/>
+    <rect class="eng-blade" x="326" y="143" width="5" height="14"/>
+    <rect class="eng-blade" x="336" y="144" width="5" height="13"/>
+    <rect class="eng-hot" x="350" y="128" width="40" height="24" rx="8"/>
+    <rect class="eng-blade" x="396" y="128" width="5" height="26"/>
+    <rect class="eng-blade" x="406" y="127" width="5" height="27"/>
+    <rect class="eng-blade" x="422" y="124" width="6" height="30"/>
+    <rect class="eng-blade" x="436" y="122" width="6" height="32"/>
+    <rect class="eng-blade" x="450" y="120" width="6" height="34"/>
+    <rect class="eng-blade" x="464" y="118" width="6" height="36"/>
+    <line class="eng-shaft" x1="256" y1="180" x2="412" y2="180"/>
+  </g>
+</defs>
+<use href="#eng-half"/>
+<use href="#eng-half" transform="translate(0 380) scale(1 -1)"/>
+<line class="eng-shaft" x1="176" y1="190" x2="472" y2="190"/>
+<path class="eng-metal" d="M470,160 L610,190 L470,220 Z"/>
+<path class="eng-metal" d="M96,190 Q112,152 150,148 L150,232 Q112,228 96,190 Z"/>
+<rect class="eng-ring" x="142" y="140" width="42" height="100" rx="9"/>
+<rect class="eng-disk" x="150" y="150" width="26" height="80" rx="4"/>
+
+<line class="edge" x1="14" y1="110" x2="58" y2="110" marker-end="url(#e1a)"/>
+<line class="edge" x1="14" y1="270" x2="58" y2="270" marker-end="url(#e1a)"/>
+<text class="m" x="14" y="100">air in</text>
+<path class="eng-flow" d="M196,88 L540,96" marker-end="url(#e1a)"/>
+<text class="m" x="300" y="84">bypass air</text>
+
+<line class="eng-lead" x1="163" y1="30" x2="163" y2="70"/>
+<text class="m" x="163" y="22" text-anchor="middle">fan blades</text>
+<line class="eng-lead" x1="520" y1="30" x2="520" y2="48"/>
+<text class="m" x="520" y="22" text-anchor="middle">nacelle</text>
+
+<line class="eng-lead" x1="229" y1="364" x2="229" y2="236"/>
+<text class="m" x="229" y="376" text-anchor="middle">booster</text>
+<line class="eng-lead" x1="300" y1="382" x2="300" y2="236"/>
+<text class="m" x="300" y="394" text-anchor="middle">HP compressor</text>
+<line class="eng-lead" x1="370" y1="364" x2="370" y2="252"/>
+<text class="m" x="370" y="376" text-anchor="middle">combustor</text>
+<line class="eng-lead" x1="405" y1="382" x2="405" y2="254"/>
+<text class="m" x="405" y="394" text-anchor="middle">HP turbine</text>
+<line class="eng-lead" x1="452" y1="364" x2="452" y2="256"/>
+<text class="m" x="452" y="376" text-anchor="middle">LP turbine</text>
+<line class="eng-lead" x1="575" y1="364" x2="575" y2="200"/>
+<text class="m" x="575" y="376" text-anchor="middle">exhaust</text>
+<text class="m" x="640" y="186">Turbofan: the turbine</text>
+<text class="m" x="640" y="201">drives the fan and its disk</text>
+
+<polyline class="eng-call" points="148,234 108,300 72,362"/>
+<text class="acc" x="20" y="380">Fan disk</text>
+<text class="m" x="20" y="396">life-limited · retired at a cycle limit</text>
+<text class="m" x="20" y="412">the fan blades slot into its rim</text>
+<text class="m" x="20" y="428">every takeoff counts</text>
+
+<rect class="box" x="700" y="270" width="220" height="130" rx="8"/>
+<text class="b" x="716" y="294">WO-1014 · STK-014</text>
+<text class="m" x="716" y="314">P/N 335-006-411-0</text>
+<text class="m" x="716" y="330">S/N FDK12345</text>
+<text class="m" x="716" y="346">CSN 18,400 of 30,000</text>
+<text class="m" x="716" y="362">born 1999 · 3 operators</text>
+<text class="m" x="716" y="378">back from overhaul, 2026</text>
+</svg>
+    </div>
+  </figure>
+
+
+  </div>
+
+  <div class="slide" data-title="The core flow">
+  <figure class="flow wide">
+    <h3 class="figtitle">The core flow: Claude reads, code decides, a person signs</h3>
+    <div class="diagram">
+<svg viewBox="0 0 1420 660" role="img" aria-label="The core flow, built on the Claude Agent SDK's agents, subagents and tools. A packet of documents goes into the harness, where Claude which reads every document, finds the missing certificate, quotes every field, and sends subagents into each open finding, using five kinds of read-only tool: document read, rubric and catalog read, records read, stores and SAP read, and part and twin read. Its claims go to the verifiers, 19 checks in plain code, and policy.decide() is the only thing that decides: CLEARED, BLOCKED, or HITL_REVIEW. The fan disk goes to HITL_REVIEW, which sends a Slack card to the aerospace engineer, assigned by role in a queue. Approve or Reject goes back through a signed click to the code, which re-runs every check. Need more info goes back to Claude as new context.">
+<defs>
+  <marker id="g1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="g1w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-w" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<g>
+<!-- the harness: everything around the model, Claude's tools and the verifiers alike -->
+<rect class="harness" x="284" y="36" width="762" height="394" rx="12"/>
+<text class="t2 acc" x="300" y="62">Harness</text>
+
+<text class="hd" x="130" y="22" text-anchor="middle">INBOUND</text>
+<text class="hd" x="470" y="22" text-anchor="middle">LLM_REVIEW</text>
+<text class="hd" x="865" y="22" text-anchor="middle">VERIFIER_CHECK</text>
+<text class="hd" x="1245" y="22" text-anchor="middle">OUTCOME</text>
+
+<!-- packet -->
+<rect class="box" x="20" y="84" width="220" height="330" rx="8"/>
+<text class="t" x="36" y="120">Packet in</text>
+<text class="l" x="36" y="156">8130-3 · 2026</text>
+<text class="l" x="36" y="182">NDT report · 2026</text>
+<text class="l" x="36" y="208">EASA Form 1 · 2011</text>
+<text class="l" x="36" y="234">OEM release · 1999</text>
+<text class="ws" x="36" y="260">material cert missing</text>
+<text class="s" x="36" y="390">27 years · 4 formats</text>
+<line class="edge" x1="240" y1="249" x2="298" y2="249" marker-end="url(#g1a)"/>
+<text class="s" x="262" y="239" text-anchor="middle">reads</text>
+
+<!-- Claude -->
+<rect class="box model" x="300" y="84" width="340" height="330" rx="8"/>
+<text class="t" x="320" y="120">Claude</text>
+<rect class="chip" x="424" y="104" width="55" height="22" rx="4"/><text class="code" x="451.5" y="119.5" text-anchor="middle">Agent</text>
+<rect class="chip" x="487" y="104" width="78" height="22" rx="4"/><text class="code" x="526" y="119.5" text-anchor="middle">Subagent</text>
+<rect class="chip" x="573" y="104" width="47" height="22" rx="4"/><text class="code" x="596.5" y="119.5" text-anchor="middle">Tool</text>
+<text class="s" x="320" y="142">Claude Agent SDK · a goal, no procedure</text>
+<text class="l" x="320" y="174">Reads every document, any format</text>
+<text class="l" x="320" y="198">Finds the missing cert on the portal</text>
+<text class="l" x="320" y="222">Quotes every field it reports</text>
+<text class="l" x="320" y="246">Subagents dig into each open finding</text>
+<rect class="box" x="316" y="262" width="308" height="136" rx="6"/>
+<text class="s" x="330" y="283">Tools · read-only, every call logged</text>
+<text class="tl" x="330" y="305">Document read<tspan class="s"> · packet, archive, portal</tspan></text>
+<text class="tl" x="330" y="324">Rubric and catalog read<tspan class="s"> · limits, fit</tspan></text>
+<text class="tl" x="330" y="343">Records read<tspan class="s"> · work orders, cert history</tspan></text>
+<text class="tl" x="330" y="362">Stores and SAP read<tspan class="s"> · stock, POs</tspan></text>
+<text class="tl" x="330" y="381">Part and twin read<tspan class="s"> · data plate, cycles</tspan></text>
+<line class="edge" x1="640" y1="249" x2="698" y2="249" marker-end="url(#g1a)"/>
+<text class="s" x="669" y="239" text-anchor="middle">claims</text>
+
+<!-- code -->
+<rect class="box gate" x="700" y="84" width="330" height="330" rx="8"/>
+<text class="t" x="720" y="120">Verifiers</text>
+<text class="s" x="720" y="142">19 checks · plain Python · no model</text>
+<text class="l" x="720" y="180">✓ cycles under the life limit</text>
+<text class="l" x="720" y="208">✓ NDT under the reject limit</text>
+<text class="l" x="720" y="236">✓ every quote on its cited page</text>
+<text class="l" x="720" y="264">✓ twin agrees with the paperwork</text>
+<text class="ws" x="720" y="292" style="font-size:15px;font-weight:700">! NDT sign-off unclear</text>
+<rect class="box" x="716" y="342" width="298" height="56" rx="6"/>
+<text class="pol" x="732" y="366">policy.decide()</text>
+<text class="s" x="732" y="387">the only thing that decides</text>
+
+<!-- outcomes -->
+<line class="edge" x1="1030" y1="249" x2="1068" y2="249"/>
+<line class="edge" x1="1068" y1="120" x2="1068" y2="378"/>
+<line class="edge" x1="1068" y1="120" x2="1098" y2="120" marker-end="url(#g1a)"/>
+<line class="edge" x1="1068" y1="249" x2="1098" y2="249" marker-end="url(#g1a)"/>
+<line class="edge" x1="1068" y1="378" x2="1098" y2="378" marker-end="url(#g1a)"/>
+<rect class="box" x="1100" y="84" width="290" height="72" rx="6"/>
+<text class="t2" x="1116" y="114">CLEARED</text>
+<text class="s" x="1116" y="138">every check passed</text>
+<rect class="box" x="1100" y="213" width="290" height="72" rx="6"/>
+<text class="t2" x="1116" y="243">BLOCKED</text>
+<text class="s" x="1116" y="267">a hard rule failed · no override</text>
+<rect class="hitl" x="1100" y="342" width="290" height="72" rx="6"/>
+<text class="t2" x="1116" y="372">HITL_REVIEW</text>
+<text class="ws" x="1116" y="396" style="font-size:15px;font-weight:700">! NDT sign-off unclear</text>
+
+<!-- the person -->
+<line class="edge" x1="1245" y1="414" x2="1245" y2="478" marker-end="url(#g1a)"/>
+<rect class="box" x="1100" y="480" width="290" height="170" rx="6"/>
+<text class="t2" x="1116" y="510">Slack card</text>
+<text class="s" x="1116" y="534">“Part clearance halted: NDT”</text>
+<text class="s" x="1116" y="554">what passed, what didn't</text>
+<text class="s" x="1116" y="574">one specific ask: NDT page 4</text>
+<rect class="btn" x="1116" y="596" width="78" height="28" rx="4"/><text class="s" x="1155" y="615" text-anchor="middle">Approve</text>
+<rect class="btn" x="1202" y="596" width="66" height="28" rx="4"/><text class="s" x="1235" y="615" text-anchor="middle">Reject</text>
+<rect class="btn" x="1276" y="596" width="98" height="28" rx="4"/><text class="s" x="1325" y="615" text-anchor="middle">More info</text>
+<line class="edge" x1="1100" y1="565" x2="1012" y2="565" marker-end="url(#g1a)"/>
+<text class="s" x="1056" y="555" text-anchor="middle">asks</text>
+<rect class="group" x="760" y="510" width="250" height="110" rx="10"/>
+<text class="t2" x="776" y="542">Aerospace engineer</text>
+<text class="s" x="776" y="566">assigned by role in queue</text>
+<text class="s" x="776" y="586">answers days later if needed</text>
+
+<line class="edge" x1="885" y1="510" x2="885" y2="416" marker-end="url(#g1a)"/>
+<text class="s" x="897" y="450">Approve · Reject, signed</text>
+<text class="s" x="897" y="468">every check re-runs</text>
+<polyline class="wake" points="760,565 470,565 470,416" marker-end="url(#g1w)"/>
+<text class="ws" x="482" y="456">Need more info:</text>
+<text class="ws" x="482" y="474">the note is new context,</text>
+<text class="ws" x="482" y="492">Claude looks again</text>
+
+<!-- legend -->
+<rect class="harness" x="20" y="466" width="26" height="16" rx="3"/>
+<text class="s" x="56" y="479">harness: everything around the model</text>
+<rect class="box model" x="20" y="494" width="26" height="16" rx="3"/>
+<text class="s" x="56" y="507">Claude: reads, never decides</text>
+<rect class="box gate" x="20" y="522" width="26" height="16" rx="3"/>
+<text class="s" x="56" y="535">code: checks and decides</text>
+<rect class="group" x="20" y="550" width="26" height="16" rx="3"/>
+<text class="s" x="56" y="563">a person: signs</text>
+<text class="s" x="20" y="602">block: a hard rule, no override</text>
+<text class="s" x="20" y="622">ask: goes to the role that owns it</text>
+</g>
+</svg>
+    </div>
+    <figcaption>The fan disk passes 18 of its 19 checks. The one it can't prove, a handwritten NDT sign-off, becomes one card for one engineer. Approve or Reject goes back through code that re-runs every check. Need more info goes back to Claude as new context. The next slide is the same flow with every tool and check named.</figcaption>
+  </figure>
+
+  </div>
+
+  <div class="slide" data-title="Bounded autonomy, in detail">
+
+  <figure class="wide zoomable">
+    <h3 class="figtitle">The fan disk through the harness, in detail</h3>
+    <div class="diagram">
+<svg viewBox="0 0 1420 910" role="img" aria-label="The fan disk through the harness. Events and a schedule put jobs on a queue: a part received, a finding opened, a person's note, or a scheduled sweep. One kind of worker claims a job and runs Claude, an agent whose goal comes from the job, with subagents for context offloading and read-only tools. When Claude finishes, its claims go to deterministic gates: source checks, verifiers and ledger rules, a logic check, and policy.decide(), which decides what happens next. Every check passes except the NDT sign-off, so the disk goes to HITL review. A Slack card reaches the aerospace engineer. Approve or Reject resumes the policy, which re-runs every check. Need more info becomes a new investigation job on the queue.">
+<defs>
+  <marker id="f1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="f1w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-w" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<g transform="translate(0 40)">
+<!-- the harness: everything around the model, agents and gates alike -->
+<rect class="harness" x="252" y="-6" width="954" height="672" rx="12"/>
+<text class="b h acc" x="268" y="16">Harness</text>
+
+<text class="colhead" x="125" y="-22" text-anchor="middle">INBOUND</text>
+<text class="colhead" x="515" y="-22" text-anchor="middle">LLM_REVIEW</text>
+<text class="colhead" x="1005" y="-22" text-anchor="middle">VERIFIER_CHECK</text>
+<text class="colhead" x="1320" y="-22" text-anchor="middle">OUTCOME</text>
+
+<!-- A · the packet -->
+<rect class="box" x="20" y="50" width="210" height="490" rx="8"/>
+<text class="b h" x="36" y="76">Packet in</text>
+<text class="m" x="36" y="94">WO-1014 · tail N101AA</text>
+<text class="b" x="36" y="122">CFM56-7B fan disk</text>
+<text class="m" x="36" y="139">S/N FDK12345 · CSN 18,400</text>
+<text class="m" x="36" y="154">life limit 30,000 cycles</text>
+<rect class="box" x="36" y="172" width="178" height="50" rx="5"/>
+<text class="b" x="48" y="192">FAA 8130-3 · 2026</text>
+<text class="m" x="48" y="208">S/N block 10 · CSN 18,400</text>
+<rect class="box" x="36" y="232" width="178" height="50" rx="5"/>
+<text class="b" x="48" y="252">NDT report · 2026</text>
+<text class="m" x="48" y="268">0.012 mm · handwritten p.4</text>
+<rect class="box" x="36" y="292" width="178" height="50" rx="5"/>
+<text class="b" x="48" y="312">EASA Form 1 · 2011</text>
+<text class="m" x="48" y="328">S/N in remarks · CSN 9,100</text>
+<rect class="box" x="36" y="352" width="178" height="50" rx="5"/>
+<text class="b" x="48" y="372">OEM release · 1999</text>
+<text class="m" x="48" y="388">free text · CSN 0</text>
+<rect class="missing" x="36" y="412" width="178" height="50" rx="5"/>
+<text class="warn" x="48" y="432">Material cert</text>
+<text class="wtext" x="48" y="448">missing from the packet</text>
+<text class="m" x="125" y="492" text-anchor="middle">27 years · 3 issuers</text>
+<text class="m" x="125" y="507" text-anchor="middle">4 formats, key fields</text>
+<text class="m" x="125" y="522" text-anchor="middle">in different places</text>
+<line class="edge" x1="230" y1="50" x2="278" y2="50" marker-end="url(#f1a)"/>
+
+<!-- B · what starts Claude: events and a schedule put jobs on a queue; one kind of worker claims them -->
+<rect class="box" x="280" y="26" width="140" height="88" rx="6"/>
+<text class="b" x="292" y="44">Events + schedule</text>
+<text class="m" x="292" y="61">part received</text>
+<text class="m" x="292" y="75">finding opened</text>
+<text class="m" x="292" y="89">a person's note</text>
+<text class="m" x="292" y="103">schedule: sweeps</text>
+<rect class="box" x="440" y="26" width="150" height="88" rx="6"/>
+<text class="b" x="452" y="44">Job queue</text>
+<text class="mo" x="452" y="62">INGEST_PACKET</text>
+<text class="mo" x="452" y="77">INVESTIGATE</text>
+<text class="m" x="452" y="98">one lease per job</text>
+<rect class="box" x="610" y="26" width="150" height="88" rx="6"/>
+<text class="b" x="622" y="44">Worker</text>
+<text class="m" x="622" y="61">wakes, claims a job,</text>
+<text class="m" x="622" y="75">runs Claude</text>
+<text class="m" x="622" y="98">crash → the job returns</text>
+<line class="edge" x1="420" y1="70" x2="438" y2="70" marker-end="url(#f1a)"/>
+<line class="edge" x1="590" y1="70" x2="608" y2="70" marker-end="url(#f1a)"/>
+<line class="edge" x1="685" y1="114" x2="685" y2="128" marker-end="url(#f1a)"/>
+
+<!-- Claude: one agent whose goal comes from the job; subagents for context offloading; read-only tools -->
+<rect class="box" x="270" y="130" width="490" height="405" rx="8"/>
+<text class="b h" x="286" y="154">Claude · Claude Agent SDK</text>
+<rect class="chip" x="590" y="140" width="43" height="18" rx="3"/><text class="code" x="611.5" y="153" text-anchor="middle">Agent</text>
+<rect class="chip" x="639" y="140" width="63" height="18" rx="3"/><text class="code" x="670.5" y="153" text-anchor="middle">Subagent</text>
+<rect class="chip" x="708" y="140" width="36" height="18" rx="3"/><text class="code" x="726" y="153" text-anchor="middle">Tool</text>
+<text class="m" x="286" y="172">Claude controls how: a goal from the job, no if-then procedure</text>
+<rect class="box model" x="286" y="186" width="458" height="74" rx="6"/>
+<text class="b" x="300" y="206">Agent</text>
+<text class="m" x="300" y="224">INGEST_PACKET → read the packet, quote every field it reads</text>
+<text class="m" x="300" y="240">INVESTIGATE → gather the evidence for one open finding</text>
+<line class="edge" x1="400" y1="260" x2="400" y2="286" marker-end="url(#f1a)"/>
+<text class="m" x="408" y="277">delegates</text>
+<line class="edge" x1="630" y1="288" x2="630" y2="262" marker-end="url(#f1a)"/>
+<text class="m" x="638" y="277">hands back</text>
+<rect class="box" x="286" y="288" width="458" height="86" rx="6"/>
+<text class="b" x="300" y="306">Subagents · context offloading</text>
+<rect class="box model" x="300" y="316" width="136" height="26" rx="5"/>
+<text x="368" y="333" text-anchor="middle">systems-analyst</text>
+<rect class="box model" x="446" y="316" width="136" height="26" rx="5"/>
+<text x="514" y="333" text-anchor="middle">vendor-analyst</text>
+<rect class="box model" x="592" y="316" width="138" height="26" rx="5"/>
+<text x="661" y="333" text-anchor="middle">records-researcher</text>
+<text class="m" x="300" y="362">each reads in its own context, then hands its findings back</text>
+<rect class="box" x="286" y="388" width="458" height="132" rx="6"/>
+<text class="b" x="302" y="408">Read-only tools · in-process MCP server</text>
+<text class="mo" x="302" y="428">get_rubric · docs, NDT limits</text>
+<text class="mo" x="302" y="444">get_twin_record · OEM cycles</text>
+<text class="mo" x="302" y="460">get_data_plate · S/N on the part</text>
+<text class="mo" x="302" y="476">get_purchase_order · SAP PO</text>
+<text class="mo" x="302" y="492">get_stock_item · stores</text>
+<text class="mo" x="528" y="428">get_ipc_part · life limit</text>
+<text class="mo" x="528" y="444">vendor_cert_history</text>
+<text class="mo" x="528" y="460">list_engines_by_model</text>
+<text class="mo" x="528" y="476">query_records · SELECT only</text>
+<text class="mo" x="528" y="492">Read · Grep · Glob · archive</text>
+
+<line class="edge" x1="760" y1="330" x2="818" y2="330" marker-end="url(#f1a)"/>
+<text class="m" x="789" y="322" text-anchor="middle">claims</text>
+<text class="m" x="789" y="346" text-anchor="middle">on finish</text>
+
+<!-- C · deterministic gates -->
+<rect class="box gate" x="820" y="50" width="370" height="605" rx="8"/>
+<text class="b h" x="836" y="76">Deterministic gates · plain Python</text>
+<text class="m" x="836" y="94">every check runs whenever Claude finishes · no model here</text>
+<rect class="box" x="836" y="106" width="338" height="50" rx="6"/>
+<text class="b" x="852" y="126">Source checks</text>
+<text class="m" x="852" y="143">quote in the cited doc · whole numbers · this part</text>
+<text class="tag" x="836" y="178">VERIFIERS</text>
+<text class="tag" x="1120" y="178" text-anchor="middle">ON FAIL</text>
+<text class="tag" x="1172" y="178" text-anchor="middle">DISK</text>
+<text class="mo vn" x="836" y="200">LLP_LIFE</text><text class="m" x="992" y="200">18,400 &lt; 30,000</text><text class="sev" x="1120" y="200" text-anchor="middle">block</text><text class="ok" x="1172" y="200" text-anchor="middle">✓</text>
+<text class="mo vn" x="836" y="224">AD_COMPLIANCE</text><text class="m" x="992" y="224">no open AD</text><text class="sev" x="1120" y="224" text-anchor="middle">block</text><text class="ok" x="1172" y="224" text-anchor="middle">✓</text>
+<text class="mo vn" x="836" y="248">CERT_SIGNED</text><text class="m" x="992" y="248">block 14 signed</text><text class="sev" x="1120" y="248" text-anchor="middle">ask</text><text class="ok" x="1172" y="248" text-anchor="middle">✓</text>
+<text class="mo vn" x="836" y="272">DATA_PLATE_MATCH</text><text class="m" x="992" y="272">plate = FDK12345</text><text class="sev" x="1120" y="272" text-anchor="middle">block·ask</text><text class="ok" x="1172" y="272" text-anchor="middle">✓</text>
+<text class="mo vn" x="836" y="296">NDT_LIMIT</text><text class="m" x="992" y="296">&lt; 0.025 mm</text><text class="sev" x="1120" y="296" text-anchor="middle">block</text><text class="ok" x="1172" y="296" text-anchor="middle">✓</text>
+<text class="mo vn b" x="836" y="320">NDT_SIGNOFF</text><text class="wtext" x="992" y="320">p.4 at 0.62</text><text class="sev" x="1120" y="320" text-anchor="middle">ask</text><text class="warn" x="1172" y="320" text-anchor="middle">!</text>
+<text class="mo vn" x="836" y="344">TWIN_CYCLES</text><text class="m" x="992" y="344">18,412 ≈ 18,400</text><text class="sev" x="1120" y="344" text-anchor="middle">ask</text><text class="ok" x="1172" y="344" text-anchor="middle">✓</text>
+<text class="m" x="836" y="368">… 6 more</text><text class="ok" x="1172" y="368" text-anchor="middle">✓</text>
+<text class="tag" x="836" y="400">LEDGER RULES · ACROSS THE PACKET</text>
+<text class="mo vn" x="836" y="422">PACKET_IDENTITY</text><text class="m" x="992" y="422">one S/N</text><text class="sev" x="1120" y="422" text-anchor="middle">ask</text><text class="ok" x="1172" y="422" text-anchor="middle">✓</text>
+<text class="mo vn" x="836" y="446">PACKET_CYCLES</text><text class="m" x="992" y="446">0→9,100→18,400</text><text class="sev" x="1120" y="446" text-anchor="middle">block</text><text class="ok" x="1172" y="446" text-anchor="middle">✓</text>
+<text class="mo vn" x="836" y="470">PACKET_COMPLETE</text><text class="m" x="992" y="470">cert on portal</text><text class="sev" x="1120" y="470" text-anchor="middle">ask</text><text class="ok" x="1172" y="470" text-anchor="middle">✓</text>
+<text class="m" x="836" y="494">… 3 more</text><text class="ok" x="1172" y="494" text-anchor="middle">✓</text>
+<rect class="box" x="836" y="540" width="338" height="44" rx="6"/>
+<text class="b" x="852" y="559">Logic check</text>
+<text class="m" x="852" y="575">agent advice: a named rule + 2 independent sources</text>
+<rect class="box" x="836" y="594" width="338" height="48" rx="6"/>
+<text class="b" x="852" y="614">policy.decide(): the only decider</text>
+<text class="m" x="852" y="631">code decides what happens next: clear · block · ask</text>
+
+<!-- D · outcome -->
+<rect class="box" x="1240" y="110" width="160" height="46" rx="6"/>
+<text class="b h" x="1320" y="130" text-anchor="middle">CLEARED</text>
+<text class="m" x="1320" y="147" text-anchor="middle">ready for sign-off</text>
+<rect class="box" x="1240" y="170" width="160" height="46" rx="6"/>
+<text class="b h" x="1320" y="190" text-anchor="middle">BLOCKED</text>
+<text class="m" x="1320" y="207" text-anchor="middle">quarantine</text>
+<rect class="hitl" x="1240" y="230" width="160" height="46" rx="6"/>
+<text class="b h" x="1320" y="250" text-anchor="middle">HITL_REVIEW</text>
+<text class="wtext" x="1320" y="267" text-anchor="middle" style="font-weight:700">! NDT sign-off unclear</text>
+<polyline class="edge" points="1174,618 1215,618 1215,133 1238,133" marker-end="url(#f1a)"/>
+<line class="edge" x1="1215" y1="193" x2="1238" y2="193" marker-end="url(#f1a)"/>
+<line class="edge" x1="1215" y1="253" x2="1238" y2="253" marker-end="url(#f1a)"/>
+<line class="edge" x1="1320" y1="276" x2="1320" y2="702" marker-end="url(#f1a)"/>
+
+<!-- E · the human as an async tool -->
+<rect class="group" x="540" y="690" width="860" height="165" rx="10"/>
+<text class="b h" x="616" y="712">Human as an async tool</text>
+<text class="m" x="616" y="728">Slack or Teams · slow, authoritative,</text>
+<text class="m" x="616" y="742">answers days later</text>
+<rect class="box" x="1110" y="704" width="276" height="140" rx="6"/>
+<text class="b" x="1122" y="724">Part clearance halted: NDT</text>
+<text class="m" x="1122" y="741">I am halting the clearance of CFM56-7B</text>
+<text class="m" x="1122" y="756">Fan Disk (S/N FDK12345): 0.012 mm at</text>
+<text class="m" x="1122" y="771">dovetail slot 17; page 4 note unclear.</text>
+<text class="m" x="1122" y="788">✓ cycles  ✓ twin  ✓ cert  ! NDT</text>
+<rect class="btn" x="1122" y="802" width="52" height="20" rx="4"/><text class="m" x="1148" y="816" text-anchor="middle">Approve</text>
+<rect class="btn" x="1180" y="802" width="46" height="20" rx="4"/><text class="m" x="1203" y="816" text-anchor="middle">Reject</text>
+<rect class="btn" x="1232" y="802" width="62" height="20" rx="4"/><text class="m" x="1263" y="816" text-anchor="middle">More info</text>
+<rect class="btn" x="1300" y="802" width="62" height="20" rx="4"/><text class="m" x="1331" y="816" text-anchor="middle">Ticket ↗</text>
+<rect class="box" x="900" y="750" width="180" height="64" rx="6"/>
+<text class="b" x="990" y="772" text-anchor="middle">Aerospace engineer</text>
+<text class="m" x="990" y="789" text-anchor="middle">assigned by role in queue</text>
+<text class="m" x="990" y="804" text-anchor="middle">decides when ready</text>
+<line class="edge" x1="1110" y1="782" x2="1082" y2="782" marker-end="url(#f1a)"/>
+<line class="edge" x1="960" y1="750" x2="960" y2="658" marker-end="url(#f1a)"/>
+<text class="m" x="968" y="680">Approve · Reject → resume(): every check re-runs</text>
+<polyline class="wake" points="900,782 262,782 262,95 278,95" marker-end="url(#f1w)"/>
+<text class="wtext" x="290" y="758">Need more info: the note</text>
+<text class="wtext" x="290" y="773">becomes a new INVESTIGATE job</text>
+
+<!-- what the ingestion agent did on this packet: an example run, not part of the architecture -->
+<text class="b" x="20" y="566">On the fan disk, Claude:</text>
+<text class="m" x="20" y="584">read 4 documents, 3 formats</text>
+<text class="m" x="20" y="600">get_rubric → NDT + cert needed</text>
+<text class="m" x="20" y="616">grep portal → found the cert</text>
+<text class="m" x="20" y="632">get_twin_record → 18,412</text>
+<text class="m" x="20" y="648">read page 4 at 0.62 confidence</text>
+
+<!-- legend -->
+<rect class="harness" x="20" y="680" width="22" height="14" rx="3"/>
+<text class="m" x="50" y="691">harness: around the model</text>
+<rect class="box model" x="20" y="704" width="22" height="14" rx="3"/>
+<text class="m" x="50" y="715">Claude: reads, never decides</text>
+<rect class="box gate" x="20" y="728" width="22" height="14" rx="3"/>
+<text class="m" x="50" y="739">deterministic gate (code)</text>
+<rect class="group" x="20" y="752" width="22" height="14" rx="3"/>
+<text class="m" x="50" y="763">a person</text>
+<text class="m" x="20" y="792">block: a hard failure; no one can</text>
+<text class="m" x="20" y="807">override it from chat</text>
+<text class="m" x="20" y="826">ask: goes to the role that owns it</text>
+</g>
+</svg>
+    </div>
+  </figure>
+
+  </div>
+
+  <div class="slide" data-title="Uplift over RPA">
+  <section>
+    <div class="col">
+      <p class="eyebrow">Uplift over RPA</p>
+      <h2>The system yields better throughput and lower upkeep.</h2>
+    </div>
+
+    <div class="savings">
+      <div class="saving">
+        <span class="lab acc">Labor</span>
+        <h3>Inspector time to approve or reject</h3>
+        <div class="compare">
+          <div><span class="lab">RPA</span><b>~45 min <span class="est">est.</span></b><span>The whole packet comes back: read 4 documents in 3 formats, chase the missing cert, add up the cycles.</span></div>
+          <div class="win"><span class="lab">This harness</span><b>~5 min <span class="est">est.</span></b><span>One question: read the sign-off on page 4 and decide.</span></div>
+        </div>
+        <p class="note">About 9× less inspector time per multi-format exception, so the same team clears more parts.</p>
+      </div>
+      <div class="saving">
+        <span class="lab acc">Upkeep</span>
+        <h3>System maintenance and buildout</h3>
+        <div class="compare">
+          <div><span class="lab">RPA</span><b>1 template per layout</b><span>Every new supplier, form revision or handwritten note is an exception or a build ticket.</span></div>
+          <div class="win"><span class="lab">This harness</span><b>0 templates</b><span>New formats are read as they arrive. A change is a rubric row or a verifier, tested on the golden set before it ships.</span></div>
+        </div>
+        <p class="note">Build effort moves from templates to verifiers.</p>
+      </div>
+    </div>
+
+  </section>
+
+  </div>
+
+  <div class="slide" data-title="The Hill-Climbing Loop">
+  <figure class="loop">
+    <h3 class="figtitle">The Hill-Climbing Loop</h3>
+    <div class="diagram">
+<svg viewBox="0 0 1020 545" role="img" aria-label="The hill-climbing loop. Production records every part, check and human decision. Each decision becomes a labeled historical case, curated into a golden set of edge cases. A candidate change B, such as a prompt, a verifier or a threshold, is simulated against the current system A on the same history, in scripted runs that test the harness and live multi-trial runs that test Claude. The scores go to the gates, which must stay at zero, and the objectives, which should climb. B ships only if every gate stays at zero and an objective improves, and then becomes A in production; otherwise it is revised.">
+<defs><marker id="f2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+
+<rect class="box" x="10" y="20" width="210" height="90" rx="6"/>
+<text class="b h" x="115" y="48" text-anchor="middle">Production</text>
+<text class="m" x="115" y="68" text-anchor="middle">every part, check and click</text>
+<text class="m" x="115" y="84" text-anchor="middle">append-only events, decisions</text>
+<rect class="box" x="260" y="20" width="210" height="90" rx="6"/>
+<text class="b h" x="365" y="48" text-anchor="middle">Labeled history</text>
+<text class="b" x="365" y="68" text-anchor="middle">10,000s of historical examples</text>
+<text class="m" x="365" y="86" text-anchor="middle">each decision is a label</text>
+<rect class="box" x="510" y="20" width="210" height="90" rx="6"/>
+<text class="b h" x="615" y="46" text-anchor="middle">Golden set</text>
+<text class="m" x="615" y="64" text-anchor="middle">14 certificate + 23 agent cases</text>
+<text class="m" x="615" y="80" text-anchor="middle">blur · contradiction · over-limit ·</text>
+<text class="m" x="615" y="95" text-anchor="middle">twin · unsigned · adversarial</text>
+<rect class="box" x="760" y="20" width="210" height="90" rx="6"/>
+<text class="b h" x="865" y="48" text-anchor="middle">Candidate change B</text>
+<text class="m" x="865" y="68" text-anchor="middle">a prompt · a verifier · a limit</text>
+<text class="m" x="865" y="84" text-anchor="middle">a routing rule · a new tool</text>
+<line class="edge" x1="220" y1="65" x2="258" y2="65" marker-end="url(#f2a)"/>
+<text class="m" x="239" y="57" text-anchor="middle">record</text>
+<line class="edge" x1="470" y1="65" x2="508" y2="65" marker-end="url(#f2a)"/>
+<text class="m" x="489" y="57" text-anchor="middle">curate</text>
+
+<rect class="group" x="260" y="160" width="710" height="170" rx="10"/>
+<text class="b h" x="280" y="186">Simulate A against B on the same history</text>
+<rect class="box" x="276" y="200" width="678" height="56" rx="6"/>
+<text class="b" x="292" y="222">A · current</text>
+<text class="m" x="292" y="242">scripted runs test the harness  ·  live Claude × N trials test the model  ·  same verifiers, same policy</text>
+<rect class="box" x="276" y="264" width="678" height="56" rx="6"/>
+<text class="b" x="292" y="286">B · candidate</text>
+<text class="m" x="292" y="306">every case, every trial, graded on outcome only: the agent's path is not graded</text>
+<line class="edge" x1="615" y1="110" x2="615" y2="158" marker-end="url(#f2a)"/>
+<text class="m" x="623" y="138">cases</text>
+<line class="edge" x1="865" y1="110" x2="865" y2="158" marker-end="url(#f2a)"/>
+<text class="m" x="873" y="138">B</text>
+
+<rect class="box gate" x="260" y="380" width="460" height="112" rx="6"/>
+<text class="b h" x="276" y="404">Gates: must stay 0</text>
+<text class="m" x="276" y="424">false clears</text>
+<text class="m" x="276" y="439">unsafe dispositions</text>
+<text class="m" x="276" y="454">missed signals</text>
+<text class="m" x="276" y="469">unsafe recommendations</text>
+<text class="b h" x="500" y="404">Objectives: climb</text>
+<text class="m" x="500" y="424">review rate ↓</text>
+<text class="m" x="500" y="439">calibration error ↓</text>
+<text class="m" x="500" y="454">cost per part ↓</text>
+<text class="m" x="500" y="469">time to decision ↓</text>
+<line class="edge" x1="490" y1="330" x2="490" y2="378" marker-end="url(#f2a)"/>
+<text class="m" x="498" y="358">scores</text>
+
+<rect class="box" x="760" y="380" width="210" height="112" rx="6"/>
+<text class="b h" x="865" y="414" text-anchor="middle">Ship B?</text>
+<text class="m" x="865" y="438" text-anchor="middle">only if every gate = 0</text>
+<text class="m" x="865" y="454" text-anchor="middle">and an objective improves</text>
+<line class="edge" x1="720" y1="436" x2="758" y2="436" marker-end="url(#f2a)"/>
+
+<polyline class="edge" points="865,492 865,525 115,525 115,112" marker-end="url(#f2a)"/>
+<text class="m" x="490" y="517" text-anchor="middle">yes: B becomes A in production</text>
+<polyline class="edge" points="970,436 995,436 995,65 972,65" marker-end="url(#f2a)"/>
+<text class="m" x="1009" y="250" text-anchor="middle" transform="rotate(90 1009 250)">no: revise B</text>
+</svg>
+    </div>
+  </figure>
+
+  </div>
+
+  <div class="slide" data-title="Which checks stay">
+  <section>
+    <div class="col">
+      <h2>Which checks stay as the models get better</h2>
+    </div>
+    <div class="split">
+      <div class="kindcol">
+        <span class="kind">Rules of the domain · likely permanent</span>
+        <h3>Hard blocks: no one overrides them</h3>
+        <ul class="simple">
+          <li>Cycles under the life limit</li>
+          <li>Cycle history adds up, back to birth</li>
+          <li>NDT finding under the reject limit</li>
+          <li>No open airworthiness directive</li>
+          <li>Approved for this engine</li>
+        </ul>
+        <h3>Asks: each goes to the person who owns it</h3>
+        <ul class="simple">
+          <li>Paperwork signed and complete</li>
+          <li>Serial numbers match the part</li>
+          <li>Supplier not flagged</li>
+          <li>Twin agrees with the paperwork</li>
+        </ul>
+      </div>
+      <div class="kindcol reader">
+        <span class="kind">Checks on the reader · relax with evidence</span>
+        <h3>They catch a model that misreads</h3>
+        <p class="relax">As models get better, the evals show which of these checks have become inessential. Those can be relaxed or removed, once the evals prove it is safe.</p>
+      </div>
+    </div>
+  </section>
+
+  </div>
+
+  <div class="slide" data-title="Reuse">
+  <section>
+    <div class="col">
+      <p class="eyebrow">Reuse</p>
+      <h2>The same harness fits most regulated industries</h2>
+    </div>
+    <div class="tablewrap">
+      <table class="reuse">
+        <thead><tr><th>Industry</th><th>Use case</th><th>What it takes</th></tr></thead>
+        <tbody>
+          <tr><td>Aviation MRO</td><td>Clear an engine part for installation (this demo)</td><td><ul>
+            <li><b>Paperwork</b> 8130-3s, NDT reports, back-to-birth trace</li>
+            <li><b>Never clear</b> a part past its cycle limit</li>
+            <li><b>Signs</b> a licensed inspector or aerospace engineer</li></ul></td></tr>
+          <tr><td>Pharma manufacturing</td><td>Release a drug batch</td><td><ul>
+            <li><b>Paperwork</b> batch records, certificates of analysis, deviations</li>
+            <li><b>Never clear</b> a batch with an assay out of specification</li>
+            <li><b>Signs</b> a Qualified Person</li></ul></td></tr>
+          <tr><td>Pipelines and energy</td><td>Accept a pipe segment or weld</td><td><ul>
+            <li><b>Paperwork</b> mill test reports, weld and NDT records</li>
+            <li><b>Never clear</b> material below the design pressure rating</li>
+            <li><b>Signs</b> a certified engineer</li></ul></td></tr>
+          <tr><td>Banking</td><td>Onboard a business customer (KYC), or approve a commercial loan</td><td><ul>
+            <li><b>Paperwork</b> incorporation papers, ownership charts, financials, credit ratings, credit memos</li>
+            <li><b>Never clear</b> a sanctioned beneficial owner, or a loan outside credit policy</li>
+            <li><b>Signs</b> a compliance officer or credit officer</li></ul></td></tr>
+          <tr><td>Insurance</td><td>Pay a claim</td><td><ul>
+            <li><b>Paperwork</b> policy, invoices, adjuster notes</li>
+            <li><b>Never clear</b> a loss that isn't covered or is over the limit</li>
+            <li><b>Signs</b> a licensed adjuster</li></ul></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="swap">
+      <div>
+        <h3>Swap per industry</h3>
+        <ul>
+          <li>The rubric: what each item needs to clear</li>
+          <li>The read tools, pointed at the customer's systems of record</li>
+          <li>The domain verifiers</li>
+          <li>The roles, and where their cards go</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Keep as is</h3>
+        <ul>
+          <li>The state machine and <code>policy.decide()</code></li>
+          <li>Quote grounding and the confidence threshold</li>
+          <li>The HITL card, the signed webhook and <code>resume()</code></li>
+          <li>The golden set, the false-clear gate and the loop</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div>
+
+</div>
+
+<nav class="deckbar" id="deckbar" aria-label="Slides">
+  <button type="button" id="prev" aria-label="Previous slide">←</button>
+  <div class="dots" id="dots"></div>
+  <button type="button" id="next" aria-label="Next slide">→</button>
+  <span class="slidename" id="slidename"></span>
+  <button type="button" id="mode">Scroll view</button>
+</nav>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('#deck > .slide')];
+  const bar = document.getElementById('deckbar');
+  const dots = document.getElementById('dots');
+  const name = document.getElementById('slidename');
+  const modeBtn = document.getElementById('mode');
+  const last = slides.length - 1;
+  let cur = 0;
+
+  // Each slide's blocks go in one inner box, so a slide can be zoomed as a unit.
+  slides.forEach((sl, i) => {
+    const inner = document.createElement('div');
+    inner.className = 'inner';
+    while (sl.firstChild) inner.appendChild(sl.firstChild);
+    sl.appendChild(inner);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = i + 1;
+    b.title = sl.dataset.title;
+    b.setAttribute('aria-label', `Slide ${i + 1}: ${sl.dataset.title}`);
+    b.addEventListener('click', () => go(i));
+    dots.appendChild(b);
+  });
+
+  const presenting = () => document.body.classList.contains('deck');
+
+  // Fit the slide to the screen: shrink a tall one (not below 0.7, then it scrolls), enlarge a short one.
+  function fit() {
+    if (!presenting()) return;
+    document.documentElement.style.setProperty('--barh', bar.offsetHeight + 'px');
+    const inner = slides[cur].firstElementChild;
+    inner.style.zoom = 1;
+    const avail = window.innerHeight - bar.offsetHeight - 48;
+    const h = inner.getBoundingClientRect().height;
+    let z = Math.min(1, avail / h);
+    if (h < avail && !inner.querySelector('figure.wide')) {
+      const w = inner.getBoundingClientRect().width;
+      z = Math.min(avail / h, (document.documentElement.clientWidth - 32) / w, 1.3);
+    }
+    inner.style.zoom = Math.max(0.7, z);
+  }
+
+  function show() {
+    slides.forEach((sl, i) => { sl.hidden = presenting() && i !== cur; });
+    [...dots.children].forEach((b, i) => {
+      if (i === cur) b.setAttribute('aria-current', 'step');
+      else b.removeAttribute('aria-current');
+    });
+    name.innerHTML = '';
+    const c = document.createElement('span');
+    c.className = 'count';
+    c.textContent = `${cur + 1} / ${slides.length}`;
+    name.append(c, slides[cur].dataset.title);
+    if (presenting()) { fit(); window.scrollTo(0, 0); }
+    else slides.forEach(sl => { sl.firstElementChild.style.zoom = ''; });
+  }
+
+  function go(i) {
+    cur = Math.max(0, Math.min(last, i));
+    show();
+  }
+
+  function setMode(deck) {
+    document.body.classList.toggle('deck', deck);
+    modeBtn.textContent = deck ? 'Scroll view' : 'Present';
+    try { localStorage.setItem('fdh-mode', deck ? 'deck' : 'scroll'); } catch (e) {}
+    show();
+    if (!deck) slides[cur].scrollIntoView();
+  }
+
+  document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+  document.getElementById('next').addEventListener('click', () => go(cur + 1));
+  modeBtn.addEventListener('click', () => setMode(!presenting()));
+
+  document.addEventListener('keydown', e => {
+    if (!presenting() || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(last); }
+    else if (/^[1-9]$/.test(e.key) && +e.key <= slides.length) go(+e.key - 1);
+  });
+
+  window.addEventListener('resize', fit);
+  if (document.fonts) document.fonts.ready.then(fit);
+
+  const m = /^#s(\d+)$/.exec(location.hash);
+  if (m) cur = Math.max(0, Math.min(last, +m[1] - 1));
+  let saved = null;
+  try { saved = localStorage.getItem('fdh-mode'); } catch (e) {}
+  setMode(saved !== 'scroll');
+  if (presenting()) window.scrollTo(0, 0);
+})();
+</script>
+<script>
+(() => {
+  // Zoom a big diagram: click a spot to zoom in there, drag to move, click again for the whole diagram.
+  const MAX = 4, STEP = 1.5, CLICK = 2.5;
+  document.querySelectorAll('figure.zoomable').forEach(fig => {
+    const box = fig.querySelector('.diagram');
+    const svg = box.querySelector('svg');
+    const baseMin = parseFloat(getComputedStyle(svg).minWidth) || 0;
+    let z = 1;
+
+    const bar = document.createElement('div');
+    bar.className = 'zoombar';
+    bar.innerHTML = '<span class="zoomhint">Click to zoom · drag to move</span>' +
+      '<button type="button" data-z="out" aria-label="Zoom out">−</button>' +
+      '<button type="button" data-z="fit">Whole diagram</button>' +
+      '<button type="button" data-z="in" aria-label="Zoom in">+</button>';
+    fig.querySelector('.figtitle').after(bar);
+
+    // Visual pixels per CSS pixel: the slide itself may be scaled to fit the screen.
+    const scale = () => box.getBoundingClientRect().width / box.clientWidth || 1;
+
+    function set(nz, cx, cy) {
+      nz = Math.max(1, Math.min(MAX, nz));
+      if (cx === undefined) { cx = box.clientWidth / 2; cy = box.clientHeight / 2; }
+      if (nz === 1) {
+        z = 1;
+        box.style.height = svg.style.width = svg.style.minWidth = '';
+        box.classList.remove('zoomed');
+        box.scrollLeft = box.scrollTop = 0;
+        return;
+      }
+      if (z === 1) box.style.height = box.clientHeight + 'px';
+      const px = (box.scrollLeft + cx) / z, py = (box.scrollTop + cy) / z;
+      z = nz;
+      svg.style.width = z * 100 + '%';
+      svg.style.minWidth = baseMin * z + 'px';
+      box.classList.add('zoomed');
+      box.scrollLeft = px * z - cx;
+      box.scrollTop = py * z - cy;
+    }
+
+    bar.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      if (b.dataset.z === 'in') set(z * STEP);
+      else if (b.dataset.z === 'out') set(z / STEP);
+      else set(1);
+    });
+
+    let drag = null;
+    box.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      drag = { x: e.clientX, y: e.clientY, l: box.scrollLeft, t: box.scrollTop, moved: false };
+    });
+    box.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+      drag.moved = true;
+      if (z > 1) {
+        box.classList.add('dragging');
+        const k = scale();
+        box.scrollLeft = drag.l - dx / k;
+        box.scrollTop = drag.t - dy / k;
+      }
+    });
+    const end = e => {
+      if (!drag) return;
+      const clicked = !drag.moved;
+      drag = null;
+      box.classList.remove('dragging');
+      if (!clicked || e.type !== 'pointerup') return;
+      const r = box.getBoundingClientRect(), k = scale();
+      if (z === 1) set(CLICK, (e.clientX - r.left) / k, (e.clientY - r.top) / k);
+      else set(1);
+    };
+    box.addEventListener('pointerup', end);
+    box.addEventListener('pointercancel', end);
+    box.addEventListener('dragstart', e => e.preventDefault());
+
+    // + and - zoom the diagram on screen; 0 shows all of it.
+    document.addEventListener('keydown', e => {
+      if (e.metaKey || e.ctrlKey || e.altKey || fig.closest('.slide')?.hidden) return;
+      if (e.key === '+' || e.key === '=') set(z * STEP);
+      else if (e.key === '-') set(z / STEP);
+      else if (e.key === '0') set(1);
+    });
+    window.addEventListener('resize', () => set(1));
+  });
+})();
+</script>
+
+</body></html>
