@@ -277,50 +277,56 @@
 
   </div>
 
-  <div class="slide" data-title="Bounded autonomy">
+  <div class="slide" data-title="Solution approach">
   <section>
+    <p class="eyebrow">Solution approach</p>
     <h2 class="slidetitle">Bounded Autonomy and Deterministic Verifiers</h2>
   </section>
 
   <figure class="flow approach">
     <div class="diagram">
-<svg viewBox="0 0 1180 280" role="img" aria-label="Bounded autonomy in three steps. Claude reads: any document in any format, quoting every value it reports, through read-only tools. It passes its claims, each quoted, to code. Code decides: deterministic verifiers clear a part only if every check passes, block it if a hard rule fails, and ask a person about anything unproven. A person signs off on one prepared question and a brief, and can approve, reject or ask for more. Asking for more sends the note back to Claude as new context.">
+<svg viewBox="0 0 1160 380" role="img" aria-label="Before and after. Before: a person reads every document by hand, a person verifies it against records and limits, and a person signs off on the whole packet. After: Claude reads any document and quotes every value, code verifies with deterministic checks and clears only if every check passes, and a person signs off on one prepared question. When the person provides more info, the note is new context and Claude looks again.">
 <defs>
   <marker id="a2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
   <marker id="a2w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-w" d="M0,0 L10,5 L0,10 z"/></marker>
 </defs>
-<rect class="box" x="10" y="20" width="320" height="170" rx="8"/>
-<circle class="chip" cx="44" cy="50" r="14"/><text class="t2 acc" x="44" y="56" text-anchor="middle">1</text>
-<text class="t" x="68" y="57">Claude reads</text>
-<text class="s" x="30" y="80">the model: flexible, never decides</text>
-<text class="l" x="30" y="116">Any document, any format or era</text>
-<text class="l" x="30" y="142">Quotes every value it reports</text>
-<text class="l" x="30" y="168">Read-only tools, every call logged</text>
-<line class="edge" x1="330" y1="105" x2="428" y2="105" marker-end="url(#a2a)"/>
-<text class="s" x="379" y="95" text-anchor="middle">claims</text>
-<text class="s" x="379" y="125" text-anchor="middle">each quoted</text>
-
-<rect class="box gate" x="430" y="20" width="320" height="170" rx="8"/>
-<circle class="chip" cx="464" cy="50" r="14"/><text class="t2 acc" x="464" y="56" text-anchor="middle">2</text>
-<text class="t" x="488" y="57">Code decides</text>
-<text class="s" x="450" y="80">deterministic verifiers: no model</text>
-<text class="l" x="450" y="116">Clears only if every check passes</text>
-<text class="l" x="450" y="142">A hard rule fails: blocked</text>
-<text class="l" x="450" y="168">Anything unproven: ask a person</text>
-<line class="edge" x1="750" y1="105" x2="848" y2="105" marker-end="url(#a2a)"/>
-<text class="s" x="799" y="95" text-anchor="middle">one question</text>
-<text class="s" x="799" y="125" text-anchor="middle">and a brief</text>
-
-<rect class="group" x="850" y="20" width="320" height="170" rx="8"/>
-<circle class="chip" cx="884" cy="50" r="14"/><text class="t2 acc" x="884" y="56" text-anchor="middle">3</text>
-<text class="t" x="908" y="57">A person signs off</text>
-<text class="s" x="870" y="80">the accountable expert</text>
-<text class="l" x="870" y="116">Gets a brief, not a pile of paper</text>
-<text class="l" x="870" y="142">Approves, rejects, or asks for more</text>
-<text class="l" x="870" y="168">A click re-runs every check</text>
-
-<polyline class="wake" points="1010,190 1010,236 170,236 170,192" marker-end="url(#a2w)"/>
-<text class="ws" x="590" y="262" text-anchor="middle">Asks for more: the note is new context, and Claude looks again</text>
+<text class="hd" x="10" y="80" style="fill:var(--muted)">BEFORE</text>
+<rect class="group" x="110" y="30" width="300" height="100" rx="8"/>
+<circle class="chip" cx="142" cy="60" r="14"/><text class="t2 acc" x="142" y="66" text-anchor="middle">1</text>
+<text class="t" x="166" y="67">A person reads</text>
+<text class="l" x="130" y="100">Every document, by hand</text>
+<rect class="group" x="480" y="30" width="300" height="100" rx="8"/>
+<circle class="chip" cx="512" cy="60" r="14"/><text class="t2 acc" x="512" y="66" text-anchor="middle">2</text>
+<text class="t" x="536" y="67">A person verifies</text>
+<text class="l" x="500" y="100">Cross-checks records and limits</text>
+<rect class="group" x="850" y="30" width="300" height="100" rx="8"/>
+<circle class="chip" cx="882" cy="60" r="14"/><text class="t2 acc" x="882" y="66" text-anchor="middle">3</text>
+<text class="t" x="906" y="67">A person signs off</text>
+<text class="l" x="870" y="100">The whole packet, every time</text>
+<line class="edge" x1="410" y1="80" x2="478" y2="80" marker-end="url(#a2a)"/>
+<line class="edge" x1="780" y1="80" x2="848" y2="80" marker-end="url(#a2a)"/>
+<text class="hd acc" x="10" y="240">AFTER</text>
+<rect class="box" x="110" y="180" width="300" height="124" rx="8"/>
+<circle class="chip" cx="142" cy="210" r="14"/><text class="t2 acc" x="142" y="216" text-anchor="middle">1</text>
+<text class="t" x="166" y="217">Claude reads</text>
+<text class="l" x="130" y="250">Any document, any format</text>
+<text class="l" x="130" y="274">Quotes every value it reports</text>
+<rect class="box gate" x="480" y="180" width="300" height="124" rx="8"/>
+<circle class="chip" cx="512" cy="210" r="14"/><text class="t2 acc" x="512" y="216" text-anchor="middle">2</text>
+<text class="t" x="536" y="217">Code verifies</text>
+<text class="l" x="500" y="250">Deterministic checks, no model</text>
+<text class="l" x="500" y="274">Clears only if every check passes</text>
+<rect class="group" x="850" y="180" width="300" height="124" rx="8"/>
+<circle class="chip" cx="882" cy="210" r="14"/><text class="t2 acc" x="882" y="216" text-anchor="middle">3</text>
+<text class="t" x="906" y="217">A person signs off</text>
+<text class="l" x="870" y="250">One prepared question</text>
+<text class="l" x="870" y="274">Approves or rejects</text>
+<line class="edge" x1="410" y1="242" x2="478" y2="242" marker-end="url(#a2a)"/>
+<text class="s" x="444" y="232" text-anchor="middle">claims</text>
+<line class="edge" x1="780" y1="242" x2="848" y2="242" marker-end="url(#a2a)"/>
+<text class="s" x="814" y="232" text-anchor="middle">a brief</text>
+<polyline class="wake" points="1000,304 1000,340 260,340 260,306" marker-end="url(#a2w)"/>
+<text class="ws" x="630" y="366" text-anchor="middle">A person provides more info: the note is new context, and Claude looks again</text>
 </svg>
     </div>
   </figure>
