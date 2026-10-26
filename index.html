@@ -278,9 +278,9 @@
 
   </div>
 
-  <div class="slide" data-title="Reference architecture">
+  <div class="slide" data-title="Bounded autonomy">
   <section>
-    <h2 class="slidetitle">Reference Architecture: Bounded Autonomy and Deterministic Verifiers</h2>
+    <h2 class="slidetitle">Bounded Autonomy and Deterministic Verifiers</h2>
   </section>
 
   <figure class="flow approach">
@@ -375,98 +375,6 @@
       </ul>
     </div>
   </section>
-
-  </div>
-
-  <div class="slide" data-title="Example: replacing a fan disk">
-  <section>
-    <div class="col">
-      <h2 class="slidetitle">Example: replacing a fan disk</h2>
-    </div>
-  </section>
-
-  <figure class="engine">
-    <div class="diagram">
-<svg viewBox="0 0 940 440" role="img" aria-label="Cross-section of a CFM56 turbofan, front at left. Air enters the fan; most of it bypasses the core. The core holds the booster, high-pressure compressor, combustor, high-pressure turbine and low-pressure turbine, with the exhaust cone at the rear. The fan disk, highlighted, is the hub at the front that the fan blades slot into, driven by the low-pressure shaft.">
-<defs>
-  <marker id="e1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
-  <g id="eng-half">
-    <path class="eng-shell" d="M60,68 Q64,40 104,38 L480,44 L568,78 L480,60 L110,56 Q76,58 60,68 Z"/>
-    <polygon class="eng-blade" points="154,152 172,152 170,62 156,64"/>
-    <path class="eng-shell" d="M198,150 Q206,122 236,118 L470,110 L574,134 L574,142 L470,124 L236,132 Q214,134 206,152 Z"/>
-    <rect class="eng-blade" x="214" y="136" width="4" height="22"/>
-    <rect class="eng-blade" x="224" y="136" width="4" height="22"/>
-    <rect class="eng-blade" x="234" y="136" width="4" height="22"/>
-    <rect class="eng-blade" x="256" y="136" width="5" height="26"/>
-    <rect class="eng-blade" x="266" y="137" width="5" height="24"/>
-    <rect class="eng-blade" x="276" y="138" width="5" height="22"/>
-    <rect class="eng-blade" x="286" y="139" width="5" height="20"/>
-    <rect class="eng-blade" x="296" y="140" width="5" height="18"/>
-    <rect class="eng-blade" x="306" y="141" width="5" height="16"/>
-    <rect class="eng-blade" x="316" y="142" width="5" height="15"/>
-    <rect class="eng-blade" x="326" y="143" width="5" height="14"/>
-    <rect class="eng-blade" x="336" y="144" width="5" height="13"/>
-    <rect class="eng-hot" x="350" y="128" width="40" height="24" rx="8"/>
-    <rect class="eng-blade" x="396" y="128" width="5" height="26"/>
-    <rect class="eng-blade" x="406" y="127" width="5" height="27"/>
-    <rect class="eng-blade" x="422" y="124" width="6" height="30"/>
-    <rect class="eng-blade" x="436" y="122" width="6" height="32"/>
-    <rect class="eng-blade" x="450" y="120" width="6" height="34"/>
-    <rect class="eng-blade" x="464" y="118" width="6" height="36"/>
-    <line class="eng-shaft" x1="256" y1="180" x2="412" y2="180"/>
-  </g>
-</defs>
-<use href="#eng-half"/>
-<use href="#eng-half" transform="translate(0 380) scale(1 -1)"/>
-<line class="eng-shaft" x1="176" y1="190" x2="472" y2="190"/>
-<path class="eng-metal" d="M470,160 L610,190 L470,220 Z"/>
-<path class="eng-metal" d="M96,190 Q112,152 150,148 L150,232 Q112,228 96,190 Z"/>
-<rect class="eng-ring" x="142" y="140" width="42" height="100" rx="9"/>
-<rect class="eng-disk" x="150" y="150" width="26" height="80" rx="4"/>
-
-<line class="edge" x1="14" y1="110" x2="58" y2="110" marker-end="url(#e1a)"/>
-<line class="edge" x1="14" y1="270" x2="58" y2="270" marker-end="url(#e1a)"/>
-<text class="m" x="14" y="100">air in</text>
-<path class="eng-flow" d="M196,88 L540,96" marker-end="url(#e1a)"/>
-<text class="m" x="300" y="84">bypass air</text>
-
-<line class="eng-lead" x1="163" y1="30" x2="163" y2="70"/>
-<text class="m" x="163" y="22" text-anchor="middle">fan blades</text>
-<line class="eng-lead" x1="520" y1="30" x2="520" y2="48"/>
-<text class="m" x="520" y="22" text-anchor="middle">nacelle</text>
-
-<line class="eng-lead" x1="229" y1="364" x2="229" y2="236"/>
-<text class="m" x="229" y="376" text-anchor="middle">booster</text>
-<line class="eng-lead" x1="300" y1="382" x2="300" y2="236"/>
-<text class="m" x="300" y="394" text-anchor="middle">HP compressor</text>
-<line class="eng-lead" x1="370" y1="364" x2="370" y2="252"/>
-<text class="m" x="370" y="376" text-anchor="middle">combustor</text>
-<line class="eng-lead" x1="405" y1="382" x2="405" y2="254"/>
-<text class="m" x="405" y="394" text-anchor="middle">HP turbine</text>
-<line class="eng-lead" x1="452" y1="364" x2="452" y2="256"/>
-<text class="m" x="452" y="376" text-anchor="middle">LP turbine</text>
-<line class="eng-lead" x1="575" y1="364" x2="575" y2="200"/>
-<text class="m" x="575" y="376" text-anchor="middle">exhaust</text>
-<text class="m" x="640" y="186">Turbofan: the turbine</text>
-<text class="m" x="640" y="201">drives the fan and its disk</text>
-
-<polyline class="eng-call" points="148,234 108,300 72,362"/>
-<text class="acc" x="20" y="380">Fan disk</text>
-<text class="m" x="20" y="396">life-limited · retired at a cycle limit</text>
-<text class="m" x="20" y="412">the fan blades slot into its rim</text>
-<text class="m" x="20" y="428">every takeoff counts</text>
-
-<rect class="box" x="700" y="270" width="220" height="130" rx="8"/>
-<text class="b" x="716" y="294">WO-1014 · STK-014</text>
-<text class="m" x="716" y="314">P/N 335-006-411-0</text>
-<text class="m" x="716" y="330">S/N FDK12345</text>
-<text class="m" x="716" y="346">CSN 18,400 of 30,000</text>
-<text class="m" x="716" y="362">born 1999 · 3 operators</text>
-<text class="m" x="716" y="378">back from overhaul, 2026</text>
-</svg>
-    </div>
-  </figure>
-
 
   </div>
 
@@ -590,8 +498,100 @@
 </g>
 </svg>
     </div>
-    <figcaption>The fan disk passes 18 of its 19 checks. The one it can't prove, a handwritten NDT sign-off, becomes one card for one engineer. Approve or Reject goes back through code that re-runs every check. Need more info goes back to Claude as new context. The next slide is the same flow with every tool and check named.</figcaption>
+    <figcaption>The fan disk passes 18 of its 19 checks. The one it can't prove, a handwritten NDT sign-off, becomes one card for one engineer. Approve or Reject goes back through code that re-runs every check. Need more info goes back to Claude as new context. After the fan disk example, the detailed version names every tool and check.</figcaption>
   </figure>
+
+  </div>
+
+  <div class="slide" data-title="Example: replacing a fan disk">
+  <section>
+    <div class="col">
+      <h2 class="slidetitle">Example: replacing a fan disk</h2>
+    </div>
+  </section>
+
+  <figure class="engine">
+    <div class="diagram">
+<svg viewBox="0 0 940 440" role="img" aria-label="Cross-section of a CFM56 turbofan, front at left. Air enters the fan; most of it bypasses the core. The core holds the booster, high-pressure compressor, combustor, high-pressure turbine and low-pressure turbine, with the exhaust cone at the rear. The fan disk, highlighted, is the hub at the front that the fan blades slot into, driven by the low-pressure shaft.">
+<defs>
+  <marker id="e1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+  <g id="eng-half">
+    <path class="eng-shell" d="M60,68 Q64,40 104,38 L480,44 L568,78 L480,60 L110,56 Q76,58 60,68 Z"/>
+    <polygon class="eng-blade" points="154,152 172,152 170,62 156,64"/>
+    <path class="eng-shell" d="M198,150 Q206,122 236,118 L470,110 L574,134 L574,142 L470,124 L236,132 Q214,134 206,152 Z"/>
+    <rect class="eng-blade" x="214" y="136" width="4" height="22"/>
+    <rect class="eng-blade" x="224" y="136" width="4" height="22"/>
+    <rect class="eng-blade" x="234" y="136" width="4" height="22"/>
+    <rect class="eng-blade" x="256" y="136" width="5" height="26"/>
+    <rect class="eng-blade" x="266" y="137" width="5" height="24"/>
+    <rect class="eng-blade" x="276" y="138" width="5" height="22"/>
+    <rect class="eng-blade" x="286" y="139" width="5" height="20"/>
+    <rect class="eng-blade" x="296" y="140" width="5" height="18"/>
+    <rect class="eng-blade" x="306" y="141" width="5" height="16"/>
+    <rect class="eng-blade" x="316" y="142" width="5" height="15"/>
+    <rect class="eng-blade" x="326" y="143" width="5" height="14"/>
+    <rect class="eng-blade" x="336" y="144" width="5" height="13"/>
+    <rect class="eng-hot" x="350" y="128" width="40" height="24" rx="8"/>
+    <rect class="eng-blade" x="396" y="128" width="5" height="26"/>
+    <rect class="eng-blade" x="406" y="127" width="5" height="27"/>
+    <rect class="eng-blade" x="422" y="124" width="6" height="30"/>
+    <rect class="eng-blade" x="436" y="122" width="6" height="32"/>
+    <rect class="eng-blade" x="450" y="120" width="6" height="34"/>
+    <rect class="eng-blade" x="464" y="118" width="6" height="36"/>
+    <line class="eng-shaft" x1="256" y1="180" x2="412" y2="180"/>
+  </g>
+</defs>
+<use href="#eng-half"/>
+<use href="#eng-half" transform="translate(0 380) scale(1 -1)"/>
+<line class="eng-shaft" x1="176" y1="190" x2="472" y2="190"/>
+<path class="eng-metal" d="M470,160 L610,190 L470,220 Z"/>
+<path class="eng-metal" d="M96,190 Q112,152 150,148 L150,232 Q112,228 96,190 Z"/>
+<rect class="eng-ring" x="142" y="140" width="42" height="100" rx="9"/>
+<rect class="eng-disk" x="150" y="150" width="26" height="80" rx="4"/>
+
+<line class="edge" x1="14" y1="110" x2="58" y2="110" marker-end="url(#e1a)"/>
+<line class="edge" x1="14" y1="270" x2="58" y2="270" marker-end="url(#e1a)"/>
+<text class="m" x="14" y="100">air in</text>
+<path class="eng-flow" d="M196,88 L540,96" marker-end="url(#e1a)"/>
+<text class="m" x="300" y="84">bypass air</text>
+
+<line class="eng-lead" x1="163" y1="30" x2="163" y2="70"/>
+<text class="m" x="163" y="22" text-anchor="middle">fan blades</text>
+<line class="eng-lead" x1="520" y1="30" x2="520" y2="48"/>
+<text class="m" x="520" y="22" text-anchor="middle">nacelle</text>
+
+<line class="eng-lead" x1="229" y1="364" x2="229" y2="236"/>
+<text class="m" x="229" y="376" text-anchor="middle">booster</text>
+<line class="eng-lead" x1="300" y1="382" x2="300" y2="236"/>
+<text class="m" x="300" y="394" text-anchor="middle">HP compressor</text>
+<line class="eng-lead" x1="370" y1="364" x2="370" y2="252"/>
+<text class="m" x="370" y="376" text-anchor="middle">combustor</text>
+<line class="eng-lead" x1="405" y1="382" x2="405" y2="254"/>
+<text class="m" x="405" y="394" text-anchor="middle">HP turbine</text>
+<line class="eng-lead" x1="452" y1="364" x2="452" y2="256"/>
+<text class="m" x="452" y="376" text-anchor="middle">LP turbine</text>
+<line class="eng-lead" x1="575" y1="364" x2="575" y2="200"/>
+<text class="m" x="575" y="376" text-anchor="middle">exhaust</text>
+<text class="m" x="640" y="186">Turbofan: the turbine</text>
+<text class="m" x="640" y="201">drives the fan and its disk</text>
+
+<polyline class="eng-call" points="148,234 108,300 72,362"/>
+<text class="acc" x="20" y="380">Fan disk</text>
+<text class="m" x="20" y="396">life-limited · retired at a cycle limit</text>
+<text class="m" x="20" y="412">the fan blades slot into its rim</text>
+<text class="m" x="20" y="428">every takeoff counts</text>
+
+<rect class="box" x="700" y="270" width="220" height="130" rx="8"/>
+<text class="b" x="716" y="294">WO-1014 · STK-014</text>
+<text class="m" x="716" y="314">P/N 335-006-411-0</text>
+<text class="m" x="716" y="330">S/N FDK12345</text>
+<text class="m" x="716" y="346">CSN 18,400 of 30,000</text>
+<text class="m" x="716" y="362">born 1999 · 3 operators</text>
+<text class="m" x="716" y="378">back from overhaul, 2026</text>
+</svg>
+    </div>
+  </figure>
+
 
   </div>
 
@@ -995,6 +995,7 @@
     </div>
   </section>
   </div>
+
 
 </div>
 
