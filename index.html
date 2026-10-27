@@ -94,6 +94,7 @@
   figcaption { color: var(--muted); font-size: 14.5px; margin-top: 14px; max-width: 95ch; }
   figcaption.oneline { max-width: none; }
   figcaption.oneline span { color: var(--accent); margin: 0 6px; }
+  .code-link a { color: var(--accent); }
   .box { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
   .model { stroke-dasharray: 6 4; }
   .gate { stroke: var(--accent); stroke-width: 2.6; fill: var(--accent-soft); }
@@ -514,6 +515,7 @@
     </div>
     <figcaption class="oneline">Clears only when code proves every check <span>·</span> An unprovable check → one card, one engineer <span>·</span> Approve or Reject re-runs every check <span>·</span> Need more info → Claude looks again</figcaption>
   </figure>
+  <p class="cite code-link">The code behind this diagram: <a href="https://github.com/jwsystems/regulated-aero-harness">github.com/jwsystems/regulated-aero-harness</a>. The “Layout” table in its README names the file behind each box.</p>
 
   </div>
 
@@ -798,6 +800,7 @@
 <text class="m" x="20" y="616">grep portal → found the cert</text>
 <text class="m" x="20" y="632">get_twin_record → 18,412</text>
 <text class="m" x="20" y="648">read page 4 at 0.62 confidence</text>
+<text class="m" x="20" y="664">illustrative: a scripted run</text>
 
 <!-- legend -->
 <rect class="harness" x="20" y="680" width="22" height="14" rx="3"/>
@@ -918,6 +921,7 @@
 <text class="m" x="1009" y="250" text-anchor="middle" transform="rotate(90 1009 250)">no: revise B</text>
 </svg>
     </div>
+    <figcaption>A design, partly built. Built: the golden set, scripted, replay and live evals, the gates, review rate and calibration. Not yet: the labeled production history, and the cost and time objectives.</figcaption>
   </figure>
 
   </div>
