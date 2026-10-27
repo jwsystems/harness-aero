@@ -184,7 +184,7 @@
   .stat b { display: block; font: 700 clamp(24px, 3vw, 30px)/1.1 var(--display); font-variant-numeric: tabular-nums; color: var(--ink); }
   .stat span { color: var(--muted); font-size: 14px; }
   .question { font: 700 clamp(19px, 2.4vw, 23px)/1.35 var(--display); margin: 26px 0 0; max-width: 46ch; text-wrap: balance; }
-  .stat sup, .cite sup, .lede sup { font-size: .7em; line-height: 0; color: var(--accent); }
+  .stat sup, .cite sup, .lede sup, .goals sup { font-size: .7em; line-height: 0; color: var(--accent); }
   .cite { margin: 12px 0 0; color: var(--muted); font-size: 12.5px; }
   .cite a { color: var(--muted); text-underline-offset: 2px; }
   .cite.sources-note { margin-top: 40px; font-size: 11px; }
@@ -209,8 +209,7 @@
   .src p { margin: 0; font-size: 14.5px; }
   .src.docs { grid-column: span 2; border-color: var(--accent); background: var(--accent-soft); }
   @media (max-width: 560px) { .src.docs { grid-column: auto; } }
-  .facts { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px 32px; align-items: stretch; }
-  @media (min-width: 1100px) { .facts { grid-template-columns: max-content minmax(0, 1fr); } .factlist li { white-space: nowrap; } }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 32px; align-items: stretch; }
   @media (max-width: 860px) { .facts { grid-template-columns: 1fr; } }
   .facts .factcol { gap: 12px; padding: 16px 22px 20px; }
   .factcol h2, .facts .docs h2 { margin: 0; }
@@ -225,6 +224,8 @@
 
   .approach svg { min-width: 760px; }
   .asks { display: grid; gap: 10px; }
+  .goals { margin: 4px 0 0; padding-left: 1.4em; display: grid; gap: 8px; font: 600 clamp(17px, 1.9vw, 20px)/1.4 var(--display); color: var(--ink); }
+  .goals li::marker { color: var(--accent); }
   .loop svg { min-width: 820px; }
   .engine svg { min-width: 860px; }
   .eng-metal { fill: var(--line); stroke: var(--ink); stroke-width: 1; }
@@ -279,7 +280,7 @@
   <section>
     <p class="eyebrow">Solution approach</p>
     <h2 class="slidetitle">Bounded Autonomy and Deterministic Verifiers</h2>
-    <p class="lede">Zero False Positives and Increased Throughput</p>
+    <p class="lede">Increase Throughput while Maintaining Quality</p>
   </section>
 
   <figure class="flow approach">
@@ -332,11 +333,15 @@
 
   </div>
 
-  <div class="slide" data-title="What a person reviews today">
+  <div class="slide" data-title="Solution data landscape">
   <section class="asks">
-    <h2 class="slidetitle">What data does a person spend time reviewing?</h2>
-    <h2 class="slidetitle">What can be used in verifiers and gates?</h2>
-    <p class="lede"><b>Mise en place for the expert.</b> Claude searches, cross-checks and synthesizes, so the expert starts from a prepared brief. Knowledge workers lose hours per day searching, analyzing, discussing and synthesizing information.<sup>3,4</sup></p>
+    <h2 class="slidetitle">Solution Data Landscape</h2>
+    <ol class="goals">
+      <li>What are time-consuming bottleneck processes currently done by a person that could be done by Claude?<sup>3,4</sup></li>
+      <li>What data is appropriate to convert to deterministic verifiers?</li>
+      <li>How might we produce mise en place information when a person needs to provide input?</li>
+    </ol>
+    <p class="lede"><b>Goal:</b> Increase Throughput while Maintaining Quality</p>
   </section>
 
   <section class="facts">
@@ -368,11 +373,11 @@
 
   </div>
 
-  <div class="slide" data-title="Aero Parts Harness">
+  <div class="slide" data-title="Regulated Aerospace Harness">
   <figure class="flow wide">
-    <h3 class="figtitle">Aero Parts Harness: Claude reads, code decides, a person signs</h3>
+    <h3 class="figtitle">Regulated Aerospace Harness: Bounded Autonomy and Deterministic Verifiers</h3>
     <div class="diagram">
-<svg viewBox="0 0 1420 660" role="img" aria-label="The Aero Parts Harness, built on the Claude Agent SDK's agents, subagents and tools. Claude reads a packet of documents through read-only tools: it reads every document, finds the missing certificate, quotes every field, and sends subagents into each open finding, using five kinds of read-only tool: document read, rubric and catalog read, records read, stores and SAP read, and part and twin read. Its claims go to the verifiers, 19 checks in plain code, and policy.decide() is the only thing that decides: CLEARED, BLOCKED, or HITL_REVIEW. The fan disk goes to HITL_REVIEW, which sends a Slack card to the aerospace engineer, assigned by role in a queue. Approve or Reject goes back through a signed click to the code, which re-runs every check. Need more info goes back to Claude as new context.">
+<svg viewBox="0 0 1420 660" role="img" aria-label="The Regulated Aerospace Harness, built on the Claude Agent SDK's agents, subagents and tools. Claude reads a packet of documents through read-only tools: it reads every document, finds the missing certificate, quotes every field, and sends subagents into each open finding, using five kinds of read-only tool: document read, rubric and catalog read, records read, stores and SAP read, and part and twin read. Its claims go to the verifiers, 19 checks in plain code, and policy.decide() is the only thing that decides: CLEARED, BLOCKED, or HITL_REVIEW. The fan disk goes to HITL_REVIEW, which sends a Slack card to the aerospace engineer, assigned by role in a queue. Approve or Reject goes back through a signed click to the code, which re-runs every check. Need more info goes back to Claude as new context.">
 <defs>
   <marker id="g1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
   <marker id="g1w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-w" d="M0,0 L10,5 L0,10 z"/></marker>
@@ -588,7 +593,7 @@
   <div class="slide" data-title="Fan Disk Example, in Detail">
 
   <figure class="wide zoomable">
-    <h3 class="figtitle">Aero Parts Harness: Fan Disk Example, in Detail</h3>
+    <h3 class="figtitle">Regulated Aerospace Harness: Fan Disk Example, in Detail</h3>
     <div class="diagram">
 <svg viewBox="0 0 1420 910" role="img" aria-label="The fan disk through the harness. Events and a schedule put jobs on a queue: a part received, a finding opened, a person's note, or a scheduled sweep. One kind of worker claims a job and runs Claude, an agent whose goal comes from the job, with subagents for context offloading and read-only tools. When Claude finishes, its claims go to deterministic gates: source checks, verifiers and ledger rules, a logic check, and policy.decide(), which decides what happens next. Every check passes except the NDT sign-off, so the disk goes to HITL review. A Slack card reaches the aerospace engineer. Approve or Reject resumes the policy, which re-runs every check. Need more info becomes a new investigation job on the queue.">
 <defs>
