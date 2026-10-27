@@ -92,6 +92,8 @@
   .figtitle { font: 700 17px/1.3 var(--display); margin: 0 0 14px; color: var(--ink); letter-spacing: .01em; }
   figure.wide { margin-inline: calc(-1 * max(0px, (min(1460px, 100vw - 48px) - 1180px) / 2)); }
   figcaption { color: var(--muted); font-size: 14.5px; margin-top: 14px; max-width: 95ch; }
+  figcaption.oneline { max-width: none; }
+  figcaption.oneline span { color: var(--accent); margin: 0 6px; }
   .box { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
   .model { stroke-dasharray: 6 4; }
   .gate { stroke: var(--accent); stroke-width: 2.6; fill: var(--accent-soft); }
@@ -504,12 +506,11 @@
 <text class="s" x="56" y="535">code: checks and decides</text>
 <rect class="group" x="20" y="550" width="26" height="16" rx="3"/>
 <text class="s" x="56" y="563">a person: signs</text>
-<text class="s" x="20" y="602">block: a hard rule, no override</text>
-<text class="s" x="20" y="622">ask: goes to the role that owns it</text>
+<text class="s" x="20" y="602">ask: goes to the role that owns it</text>
 </g>
 </svg>
     </div>
-    <figcaption>A part clears only when code proves every check. A check it can't prove, such as a handwritten NDT sign-off, becomes one card for one engineer. Approve or Reject goes back through code that re-runs every check. Need more info goes back to Claude as new context. The detailed version, two slides on, names every tool and check.</figcaption>
+    <figcaption class="oneline">Clears only when code proves every check <span>·</span> An unprovable check → one card, one engineer <span>·</span> Approve or Reject re-runs every check <span>·</span> Need more info → Claude looks again</figcaption>
   </figure>
 
   </div>
