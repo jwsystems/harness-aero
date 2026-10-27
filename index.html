@@ -224,7 +224,11 @@
 
   .approach svg { min-width: 760px; }
   .asks { display: grid; gap: 10px; }
-  .goals { margin: 4px 0 0; padding-left: 1.4em; display: grid; gap: 8px; font: 600 clamp(17px, 1.9vw, 20px)/1.4 var(--display); color: var(--ink); }
+  .subtitle { margin: 0; color: var(--muted); font: 600 clamp(18px, 2.2vw, 23px)/1.35 var(--display); }
+  .subtitle b { color: var(--ink); }
+  .design-qs { margin-top: 6px; }
+  .design-qs h3 { font: 700 12px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 12px; }
+  .goals { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; font: 600 clamp(16px, 1.6vw, 18px)/1.4 var(--display); color: var(--ink); }
   .goals li::marker { color: var(--accent); }
   .loop svg { min-width: 820px; }
   .engine svg { min-width: 860px; }
@@ -336,12 +340,7 @@
   <div class="slide" data-title="Solution data landscape">
   <section class="asks">
     <h2 class="slidetitle">Solution Data Landscape</h2>
-    <ol class="goals">
-      <li>What are time-consuming bottleneck processes currently done by a person that could be done by Claude?<sup>3,4</sup></li>
-      <li>What data is appropriate to convert to deterministic verifiers?</li>
-      <li>How might we produce mise en place information when a person needs to provide input?</li>
-    </ol>
-    <p class="lede"><b>Goal:</b> Increase Throughput while Maintaining Quality</p>
+    <p class="subtitle"><b>Goal:</b> Increase Throughput while Maintaining Quality</p>
   </section>
 
   <section class="facts">
@@ -367,6 +366,15 @@
       </ul>
       <p class="cite">In this demo the documents are text transcriptions, with handwriting marked as such. On a real scan, each quote is checked against the page's OCR text and its place on the page.</p>
     </div>
+  </section>
+
+  <section class="design-qs">
+    <h3>Key Design Questions</h3>
+    <ol class="goals">
+      <li>What are time-consuming bottleneck processes currently done by a person that could be done by Claude?<sup>3,4</sup></li>
+      <li>What data is appropriate to convert to deterministic verifiers?</li>
+      <li>How might we produce mise en place information when a person needs to provide input?</li>
+    </ol>
   </section>
 
   <p class="cite"><sup>3</sup> Atlassian, <a href="https://www.atlassian.com/blog/state-of-teams-2025">State of Teams 2025</a>: 25% of time spent searching for answers (12,000 knowledge workers, 200 executives) · <sup>4</sup> Microsoft, <a href="https://www.microsoft.com/en-us/worklab/work-trend-index/will-ai-fix-work">Work Trend Index 2023</a>: Microsoft 365 activity data</p>
