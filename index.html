@@ -146,6 +146,14 @@
   table.reuse li b { font-family: var(--display); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-right: 6px; }
   .also h3 { font: 700 12px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
   .also ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; color: var(--muted); font-size: 14.5px; }
+  table.map td:first-child { font: 700 12px/1.5 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+  table.map td:nth-child(2) { color: var(--muted); }
+  table.map code { font-size: 12.5px; margin-right: 6px; }
+  .swap .note { margin-top: 8px; font-size: 13.5px; }
+  .swap code { font-size: .85em; }
+  table.map { margin-top: 12px; }
+  .also ul.fits { list-style: none; padding: 0; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 8px 28px; }
+  .fits b { display: block; color: var(--ink); font-family: var(--display); }
   .missing { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1.4; stroke-dasharray: 4 3; }
 
   .flow svg { font-family: var(--body); }
@@ -945,32 +953,20 @@
   <section>
     <div class="col">
       <p class="eyebrow">Reuse</p>
-      <h2>The same harness fits most regulated industries</h2>
+      <h2>A new domain swaps the rules, not the harness</h2>
+      <p class="lede">Pharma batch release, mapped part by part onto what the fan disk already runs through.</p>
     </div>
     <div class="tablewrap">
-      <table class="reuse">
-        <thead><tr><th>Industry</th><th>Use case</th><th>What it takes</th></tr></thead>
+      <table class="reuse map">
+        <thead><tr><th>Harness part</th><th>Aerospace · built</th><th>Pharma batch release · proposed</th></tr></thead>
         <tbody>
-          <tr><td>Aviation MRO</td><td>Clear an engine part for installation (this demo)</td><td><ul>
-            <li><b>Paperwork</b> 8130-3s, NDT reports, back-to-birth trace</li>
-            <li><b>Never clear</b> a part past its cycle limit</li>
-            <li><b>Signs</b> a licensed inspector or aerospace engineer</li></ul></td></tr>
-          <tr><td>Pharma manufacturing</td><td>Release a drug batch</td><td><ul>
-            <li><b>Paperwork</b> batch records, certificates of analysis, deviations</li>
-            <li><b>Never clear</b> a batch with an assay out of specification</li>
-            <li><b>Signs</b> a Qualified Person</li></ul></td></tr>
-          <tr><td>Pipelines and energy</td><td>Accept a pipe segment or weld</td><td><ul>
-            <li><b>Paperwork</b> mill test reports, weld and NDT records</li>
-            <li><b>Never clear</b> material below the design pressure rating</li>
-            <li><b>Signs</b> a certified engineer</li></ul></td></tr>
-          <tr><td>Banking</td><td>Onboard a business customer (KYC), or approve a commercial loan</td><td><ul>
-            <li><b>Paperwork</b> incorporation papers, ownership charts, financials, credit ratings, credit memos</li>
-            <li><b>Never clear</b> a sanctioned beneficial owner, or a loan outside credit policy</li>
-            <li><b>Signs</b> a compliance officer or credit officer</li></ul></td></tr>
-          <tr><td>Insurance</td><td>Pay a claim</td><td><ul>
-            <li><b>Paperwork</b> policy, invoices, adjuster notes</li>
-            <li><b>Never clear</b> a loss that isn't covered or is over the limit</li>
-            <li><b>Signs</b> a licensed adjuster</li></ul></td></tr>
+          <tr><td>The decision</td><td>Clear an engine part for installation</td><td>Release a drug batch to market</td></tr>
+          <tr><td>The packet</td><td>8130-3, NDT report, EASA Form 1, OEM release</td><td>Executed batch record, certificates of analysis, deviation reports</td></tr>
+          <tr><td>Ground truth</td><td>Stores, parts catalog, airworthiness directives, OEM twin</td><td>Lab results and spec limits (LIMS), batch system (MES), approved suppliers</td></tr>
+          <tr><td>Block</td><td><code>LLP_LIFE</code> cycles under the life limit</td><td><code>ASSAY_IN_SPEC</code> every result inside the registered specification</td></tr>
+          <tr><td>Cross-check</td><td><code>TWIN_CYCLES</code> the twin agrees with the paperwork</td><td><code>MES_MATCH</code> the batch record agrees with the equipment's own logs</td></tr>
+          <tr><td>Ask a person</td><td><code>NDT_SIGNOFF</code> the handwritten note on page 4</td><td><code>DEVIATION_CLOSED</code> a handwritten correction with no deviation report</td></tr>
+          <tr><td>Who signs</td><td>Aerospace engineer, on a signed card</td><td>Qualified Person, with a 21 CFR Part 11 e-signature</td></tr>
         </tbody>
       </table>
     </div>
@@ -980,19 +976,29 @@
         <ul>
           <li>The rubric: what each item needs to clear</li>
           <li>The read tools, pointed at the customer's systems of record</li>
-          <li>The domain verifiers</li>
+          <li>The domain verifiers and ledger rules</li>
           <li>The roles, and where their cards go</li>
         </ul>
+        <p class="note">About half the code, ~2,350 lines: <code>verifiers.py</code>, <code>packet_rules.py</code>, <code>logic.py</code>, <code>sor/</code>, the prompts, routing</p>
       </div>
       <div>
         <h3>Keep as is</h3>
         <ul>
           <li>The state machine and <code>policy.decide()</code></li>
-          <li>Quote grounding and the confidence threshold</li>
+          <li>Quote grounding, label binding and the confidence threshold</li>
           <li>The HITL card, the signed webhook and <code>resume()</code></li>
           <li>The golden set, the false-clear gate and the loop</li>
         </ul>
+        <p class="note">The other half, ~2,240 lines: <code>policy.py</code>, <code>workflow.py</code>, <code>ledger.py</code>, the job queue, the HITL card and webhook, the evals</p>
       </div>
+    </div>
+    <div class="also">
+      <h3>Also fits</h3>
+      <ul class="fits">
+        <li><b>Pipelines and energy</b> Accept a pipe segment or weld. Never clear material below the design pressure rating.</li>
+        <li><b>Banking</b> Onboard a business customer (KYC) or approve a commercial loan. Never clear a sanctioned beneficial owner.</li>
+        <li><b>Insurance</b> Pay a claim. Never clear a loss that isn't covered or is over the limit.</li>
+      </ul>
     </div>
   </section>
   </div>
