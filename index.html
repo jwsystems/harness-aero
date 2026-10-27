@@ -184,7 +184,7 @@
   .stat b { display: block; font: 700 clamp(24px, 3vw, 30px)/1.1 var(--display); font-variant-numeric: tabular-nums; color: var(--ink); }
   .stat span { color: var(--muted); font-size: 14px; }
   .question { font: 700 clamp(19px, 2.4vw, 23px)/1.35 var(--display); margin: 26px 0 0; max-width: 46ch; text-wrap: balance; }
-  .stat sup, .cite sup { font-size: .7em; line-height: 0; color: var(--accent); }
+  .stat sup, .cite sup, .lede sup { font-size: .7em; line-height: 0; color: var(--accent); }
   .cite { margin: 12px 0 0; color: var(--muted); font-size: 12.5px; }
   .cite a { color: var(--muted); text-underline-offset: 2px; }
   .cite.sources-note { margin-top: 40px; font-size: 11px; }
@@ -225,7 +225,6 @@
 
   .approach svg { min-width: 760px; }
   .asks { display: grid; gap: 10px; }
-  .approach + .props .prop sup { font-size: .7em; line-height: 0; color: var(--accent); }
   .loop svg { min-width: 820px; }
   .engine svg { min-width: 860px; }
   .eng-metal { fill: var(--line); stroke: var(--ink); stroke-width: 1; }
@@ -279,7 +278,8 @@
   <div class="slide" data-title="Solution approach">
   <section>
     <p class="eyebrow">Solution approach</p>
-    <h2 class="slidetitle">Bounded Autonomy and Verifiers for Zero False Positives</h2>
+    <h2 class="slidetitle">Bounded Autonomy and Deterministic Verifiers</h2>
+    <p class="lede">Zero False Positives and Increased Throughput</p>
   </section>
 
   <figure class="flow approach">
@@ -330,29 +330,13 @@
     </div>
   </figure>
 
-  <div class="props">
-    <div class="prop">
-      <h3>Zero false positives</h3>
-      <p>A part clears only when code proves every check. Anything unproven is blocked or goes to a person.</p>
-    </div>
-    <div class="prop">
-      <h3>Mise en place for the expert</h3>
-      <p>Claude searches, cross-checks and synthesizes, so the expert starts from a prepared brief. Knowledge workers lose hours per day searching, analyzing, discussing and synthesizing information.<sup>3,4</sup></p>
-    </div>
-    <div class="prop">
-      <h3>One pattern, many industries</h3>
-      <p>Here, the certification paperwork that proves engine parts are genuine and tested. The same pattern fits any regulated sign-off.</p>
-    </div>
-  </div>
-
-  <p class="cite"><sup>3</sup> Atlassian, <a href="https://www.atlassian.com/blog/state-of-teams-2025">State of Teams 2025</a>: 25% of time spent searching for answers (12,000 knowledge workers, 200 executives) · <sup>4</sup> Microsoft, <a href="https://www.microsoft.com/en-us/worklab/work-trend-index/will-ai-fix-work">Work Trend Index 2023</a>: Microsoft 365 activity data</p>
-
   </div>
 
   <div class="slide" data-title="What a person reviews today">
   <section class="asks">
     <h2 class="slidetitle">What data does a person spend time reviewing?</h2>
     <h2 class="slidetitle">What can be used in verifiers and gates?</h2>
+    <p class="lede"><b>Mise en place for the expert.</b> Claude searches, cross-checks and synthesizes, so the expert starts from a prepared brief. Knowledge workers lose hours per day searching, analyzing, discussing and synthesizing information.<sup>3,4</sup></p>
   </section>
 
   <section class="facts">
@@ -378,6 +362,8 @@
       </ul>
     </div>
   </section>
+
+  <p class="cite"><sup>3</sup> Atlassian, <a href="https://www.atlassian.com/blog/state-of-teams-2025">State of Teams 2025</a>: 25% of time spent searching for answers (12,000 knowledge workers, 200 executives) · <sup>4</sup> Microsoft, <a href="https://www.microsoft.com/en-us/worklab/work-trend-index/will-ai-fix-work">Work Trend Index 2023</a>: Microsoft 365 activity data</p>
 
   </div>
 
