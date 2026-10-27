@@ -260,7 +260,7 @@
       <p class="lede">Every replacement part must be proven before the plane can fly again. Today a licensed inspector reviews by hand, one packet at a time.</p>
     </div>
     <div class="stats">
-      <div class="stat"><b>~$150K</b><span>in lost revenue for every day a 737 sits on the ground <span class="est">est.</span></span></div>
+      <div class="stat"><b>$100K+</b><span>in direct costs for every day a 737 is grounded<sup>2</sup></span></div>
       <div class="stat"><b>45,000+</b><span>commercial engines in GE Aerospace's fleet, CFM56 included<sup>1</sup></span></div>
       <div class="stat"><b>1,000s</b><span>of tracked parts per engine, each with 5–10 pieces of paperwork <span class="est">est.</span></span></div>
       <div class="stat"><b>Labor gap</b><span>too few licensed inspectors and technicians for the work</span></div>
@@ -270,7 +270,7 @@
       <svg class="qarrow" viewBox="0 0 72 24" aria-hidden="true"><line x1="2" y1="12" x2="62" y2="12"/><path d="M58,4 L70,12 L58,20"/></svg>
       <p class="question answer">Bounded autonomy, deterministic verifiers, evals, and hill-climbing.</p>
     </div>
-    <p class="cite sources-note"><sup>1</sup> GE Aerospace, <a href="https://www.sec.gov/Archives/edgar/data/40545/000130817925000116/ge013272-ars.pdf">2024 annual report</a> · est.: industry estimates, not from GE</p>
+    <p class="cite sources-note"><sup>1</sup> GE Aerospace, <a href="https://www.sec.gov/Archives/edgar/data/40545/000130817925000116/ge013272-ars.pdf">2024 annual report</a> · <sup>2</sup> IBA, <a href="https://www.iba.aero/news/the-direct-cost-of-grounding-the-boeing-737-max-8-fleet/">The direct cost of grounding the Boeing 737 MAX 8 fleet</a> (2019): about $150K per aircraft per day in lease, crew, parking and passenger rebooking, before lost revenue · est.: industry estimate</p>
   </header>
 
   </div>
@@ -355,11 +355,12 @@
     <div class="src docs">
       <span class="kind">Extract facts from unstructured data</span>
       <h2>Documents</h2>
-      <p>Every supplier and era has its own format. Claude reads them all; code checks that every value is quoted from its page.</p>
+      <p>Every supplier and era has its own format. Claude reads them all; code checks that every value is quoted from its page, under its own printed label.</p>
       <ul>
         <li>FAA 8130-3</li><li>EASA Form 1</li><li>OEM certificates</li><li>NDT reports</li>
         <li>Back-to-birth trace</li><li>Vendor emails</li><li>Handwritten sign-offs</li>
       </ul>
+      <p class="cite">In this demo the documents are text transcriptions, with handwriting marked as such. On a real scan, each quote is checked against the page's OCR text and its place on the page.</p>
     </div>
   </section>
 
@@ -425,7 +426,7 @@
 <text class="s" x="720" y="142">19 checks · plain Python · no model</text>
 <text class="l" x="720" y="180">✓ cycles under the life limit</text>
 <text class="l" x="720" y="208">✓ NDT under the reject limit</text>
-<text class="l" x="720" y="236">✓ every quote on its cited page</text>
+<text class="l" x="720" y="236">✓ each value under its label, on its page</text>
 <text class="l" x="720" y="264">✓ twin agrees with the paperwork</text>
 <text class="ws" x="720" y="292" style="font-size:15px;font-weight:700">! NDT sign-off unclear</text>
 <rect class="box" x="716" y="342" width="298" height="56" rx="6"/>
@@ -699,7 +700,7 @@
 <text class="m" x="836" y="94">every check runs whenever Claude finishes · no model here</text>
 <rect class="box" x="836" y="106" width="338" height="50" rx="6"/>
 <text class="b" x="852" y="126">Source checks</text>
-<text class="m" x="852" y="143">quote in the cited doc · whole numbers · this part</text>
+<text class="m" x="852" y="143">in its doc, under its label · whole numbers · this part</text>
 <text class="tag" x="836" y="178">VERIFIERS</text>
 <text class="tag" x="1120" y="178" text-anchor="middle">ON FAIL</text>
 <text class="tag" x="1172" y="178" text-anchor="middle">DISK</text>
@@ -791,10 +792,10 @@
 
   </div>
 
-  <div class="slide" data-title="Uplift over RPA">
+  <div class="slide" data-title="Uplift over OCR extraction">
   <section>
     <div class="col">
-      <p class="eyebrow">Uplift over RPA</p>
+      <p class="eyebrow">Uplift over OCR extraction plus a person</p>
       <h2>The system yields better throughput and lower upkeep.</h2>
     </div>
 
@@ -803,19 +804,19 @@
         <span class="lab acc">Labor</span>
         <h3>Inspector time to approve or reject</h3>
         <div class="compare">
-          <div><span class="lab">RPA</span><b>~45 min <span class="est">est.</span></b><span>The whole packet comes back: read 4 documents in 3 formats, chase the missing cert, add up the cycles.</span></div>
-          <div class="win"><span class="lab">This harness</span><b>~5 min <span class="est">est.</span></b><span>One question: read the sign-off on page 4 and decide.</span></div>
+          <div><span class="lab">OCR + a person</span><b>~45 min <span class="est">target</span></b><span>An unfamiliar layout sends the whole packet back: read 4 documents in 3 formats, chase the missing cert, add up the cycles.</span></div>
+          <div class="win"><span class="lab">This harness</span><b>~5 min <span class="est">target</span></b><span>One question: read the sign-off on page 4 and decide.</span></div>
         </div>
-        <p class="note">About 9× less inspector time per multi-format exception, so the same team clears more parts.</p>
+        <p class="note">The target is about 9× less inspector time per multi-format exception, to be measured in a pilot.</p>
       </div>
       <div class="saving">
         <span class="lab acc">Upkeep</span>
         <h3>System maintenance and buildout</h3>
         <div class="compare">
-          <div><span class="lab">RPA</span><b>1 template per layout</b><span>Every new supplier, form revision or handwritten note is an exception or a build ticket.</span></div>
-          <div class="win"><span class="lab">This harness</span><b>0 templates</b><span>New formats are read as they arrive. A change is a rubric row or a verifier, tested on the golden set before it ships.</span></div>
+          <div><span class="lab">OCR + a person</span><b>1 template per layout</b><span>Every new supplier, form revision or handwritten note is an exception or a build ticket.</span></div>
+          <div class="win"><span class="lab">This harness</span><b>1 verifier per rule</b><span>New formats are read as they arrive. A new rule is a rubric row or a verifier, tested on the golden set before it ships.</span></div>
         </div>
-        <p class="note">Build effort moves from templates to verifiers.</p>
+        <p class="note">The upkeep moves from templates to verifiers. Rules change slowly; layouts change with every supplier.</p>
       </div>
     </div>
 
@@ -840,9 +841,9 @@
 <text class="m" x="365" y="86" text-anchor="middle">each decision is a label</text>
 <rect class="box" x="510" y="20" width="210" height="90" rx="6"/>
 <text class="b h" x="615" y="46" text-anchor="middle">Golden set</text>
-<text class="m" x="615" y="64" text-anchor="middle">14 certificate + 23 agent cases</text>
+<text class="m" x="615" y="64" text-anchor="middle">14 certificate + 25 agent cases</text>
 <text class="m" x="615" y="80" text-anchor="middle">blur · contradiction · over-limit ·</text>
-<text class="m" x="615" y="95" text-anchor="middle">twin · unsigned · adversarial</text>
+<text class="m" x="615" y="95" text-anchor="middle">twin · wrong field · injection</text>
 <rect class="box" x="760" y="20" width="210" height="90" rx="6"/>
 <text class="b h" x="865" y="48" text-anchor="middle">Candidate change B</text>
 <text class="m" x="865" y="68" text-anchor="middle">a prompt · a verifier · a limit</text>
