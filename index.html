@@ -395,7 +395,7 @@
   <figure class="flow wide">
     <h3 class="figtitle">Regulated Aerospace Harness: Bounded Autonomy and Deterministic Verifiers</h3>
     <div class="diagram">
-<svg viewBox="0 0 1420 660" role="img" aria-label="The Regulated Aerospace Harness, built on the Claude Agent SDK's agents, subagents and tools. Claude reads a packet of documents through read-only tools: it reads every document, finds the missing certificate, quotes every field, and sends subagents into each open finding, using five kinds of read-only tool: document read, rubric and catalog read, records read, stores and SAP read, and part and twin read. Its claims go to the verifiers, 19 checks in plain code, and policy.decide() is the only thing that decides: CLEARED, BLOCKED, or HITL_REVIEW. The fan disk goes to HITL_REVIEW, which sends a Slack card to the aerospace engineer, assigned by role in a queue. Approve or Reject goes back through a signed click to the code, which re-runs every check. Need more info goes back to Claude as new context.">
+<svg viewBox="0 0 1420 660" role="img" aria-label="The Regulated Aerospace Harness, built on the Claude Agent SDK's agents, subagents and tools. Claude reads a packet of documents and queries the databases (stores, SAP, the parts catalog, work orders, the twin) through read-only tools: it reads every document, finds the missing certificate, quotes every field, and sends subagents into each open finding, using five kinds of read-only tool: document read, rubric and catalog read, records read, stores and SAP read, and part and twin read. Its claims go to the verifiers, 19 checks in plain code, and policy.decide() is the only thing that decides: CLEARED, BLOCKED, or HITL_REVIEW. The fan disk goes to HITL_REVIEW, which sends a Slack card to the aerospace engineer, assigned by role in a queue. Approve or Reject goes back through a signed click to the code, which re-runs every check. Need more info goes back to Claude as new context.">
 <defs>
   <marker id="g1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
   <marker id="g1w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-w" d="M0,0 L10,5 L0,10 z"/></marker>
@@ -411,16 +411,24 @@
 <text class="hd" x="1245" y="22" text-anchor="middle">OUTCOME</text>
 
 <!-- packet -->
-<rect class="box" x="20" y="84" width="220" height="330" rx="8"/>
+<rect class="box" x="20" y="84" width="220" height="214" rx="8"/>
 <text class="t" x="36" y="120">Packet</text>
-<text class="l" x="36" y="156">8130-3 · 2026</text>
-<text class="l" x="36" y="182">NDT report · 2026</text>
-<text class="l" x="36" y="208">EASA Form 1 · 2011</text>
-<text class="l" x="36" y="234">OEM release · 1999</text>
-<text class="ws" x="36" y="260">material cert missing</text>
-<text class="s" x="36" y="390">27 years · 4 formats</text>
-<line class="edge" x1="242" y1="249" x2="298" y2="249" marker-start="url(#g1a)" marker-end="url(#g1a)"/>
-<text class="s" x="262" y="239" text-anchor="middle">reads</text>
+<text class="l" x="36" y="152">8130-3 · 2026</text>
+<text class="l" x="36" y="176">NDT report · 2026</text>
+<text class="l" x="36" y="200">EASA Form 1 · 2011</text>
+<text class="l" x="36" y="224">OEM release · 1999</text>
+<text class="ws" x="36" y="248">material cert missing</text>
+<text class="s" x="36" y="282">27 years · 4 formats</text>
+<line class="edge" x1="242" y1="191" x2="298" y2="191" marker-start="url(#g1a)" marker-end="url(#g1a)"/>
+<text class="s" x="262" y="181" text-anchor="middle">reads</text>
+
+<!-- databases -->
+<rect class="box" x="20" y="314" width="220" height="100" rx="8"/>
+<text class="t" x="36" y="348">Databases</text>
+<text class="l" x="36" y="376">Stores · SAP · catalog</text>
+<text class="l" x="36" y="400">Work orders · twin</text>
+<line class="edge" x1="242" y1="364" x2="298" y2="364" marker-start="url(#g1a)" marker-end="url(#g1a)"/>
+<text class="s" x="262" y="354" text-anchor="middle">reads</text>
 
 <!-- Claude -->
 <rect class="box model" x="300" y="84" width="340" height="330" rx="8"/>
@@ -953,7 +961,7 @@
   <section>
     <div class="col">
       <p class="eyebrow">Reuse</p>
-      <h2>A new domain swaps the rules, not the harness</h2>
+      <h2>The Regulated Harness Pattern Applies to Many Industries</h2>
       <p class="lede">Pharma batch release, mapped part by part onto what the fan disk already runs through.</p>
     </div>
     <div class="tablewrap">
